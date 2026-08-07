@@ -20,6 +20,7 @@ urussu-be
 # SQLite database files
 *.db
 /db
+/sqlite
 
 # IDE and editor files
 .vscode/
