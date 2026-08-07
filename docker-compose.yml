@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: urussu
+      POSTGRES_PASSWORD: urussu
+      POSTGRES_DB: urussu
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Loaded once, on first container start (empty volume).
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U urussu -d urussu"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://urussu:urussu@db:5432/urussu?sslmode=disable
+
+volumes:
+  pgdata:
