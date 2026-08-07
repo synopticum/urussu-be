@@ -24,6 +24,8 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgres://urussu:urussu@db:5432/urussu?sslmode=disable
+    ports:
+      - "8080:8080"   # HTTP (REST + swagger.json)
 
 volumes:
   pgdata:

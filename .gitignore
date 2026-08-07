@@ -14,8 +14,8 @@
 # Go workspace file
 go.work
 
-# Compiled binary
-urussu-be
+# Compiled binary (legacy root binary; new builds go to /bin)
+/urussu-be
 
 # SQLite database files
 *.db
@@ -36,3 +36,6 @@ Thumbs.db
 # Environment variables
 .env
 .env.local
+
+# Build output
+/bin

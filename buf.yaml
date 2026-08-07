@@ -1,0 +1,16 @@
+version: v2
+modules:
+  - path: api
+deps:
+  - buf.build/googleapis/googleapis
+  - buf.build/grpc-ecosystem/grpc-gateway
+lint:
+  use:
+    - STANDARD
+  except:
+    # Directory `urussu-be` contains a dash, which is not a valid proto
+    # package component, so the package cannot match the directory name.
+    - PACKAGE_DIRECTORY_MATCH
+breaking:
+  use:
+    - FILE

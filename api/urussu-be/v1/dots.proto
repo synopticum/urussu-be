@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package urussu_be.v1;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "urussu-be/gen/urussu-be/v1;urussuv1";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "urussu-be API";
+    version: "1.0.0";
+  };
+  schemes: HTTP;
+  consumes: "application/json";
+  produces: "application/json";
+};
+
+// DotsService serves map "dot" objects stored in PostgreSQL.
+service DotsService {
+  // ListDots returns dots from the database.
+  rpc ListDots(ListDotsRequest) returns (ListDotsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/dots"
+    };
+  }
+}
+
+message ListDotsRequest {
+  // Maximum number of dots to return. Defaults to 10 when omitted.
+  int32 limit = 1;
+}
+
+message ListDotsResponse {
+  repeated Dot dots = 1;
+}
+
+message Dot {
+  string id = 1;
+  string title = 2;
+  string short_description = 3;
+  string layer = 4;
+}
