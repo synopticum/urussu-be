@@ -1,5 +1,5 @@
 CREATE TABLE users (
-    id         BIGSERIAL PRIMARY KEY,
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     role       TEXT NOT NULL DEFAULT 'user',
     email      TEXT UNIQUE NOT NULL,
     password   TEXT NOT NULL, -- bcrypt hash
@@ -7,7 +7,6 @@ CREATE TABLE users (
     last_name  TEXT NOT NULL
 );
 
--- Test user: test@example.com / password
 INSERT INTO users (role, email, password, first_name, last_name)
 VALUES (
     'nswsergey@yandex.ru',
