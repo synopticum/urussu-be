@@ -23,3 +23,28 @@ docker-up:
 
 docker-down:
 	docker compose down
+
+# DB migrations
+DATABASE_URL ?= postgres://urussu:urussu@localhost:5432/urussu_v2?sslmode=disable
+MIGRATE := go tool migrate -path db/migrations -database "$(DATABASE_URL)"
+
+migrate-create:   # usage: make migrate-create name=create_layers
+	go tool migrate create -ext sql -dir migrations -seq $(name)
+
+migrate-up:
+	$(MIGRATE) up
+
+migrate-down:     # rolls back the single latest migration
+	$(MIGRATE) down 1
+
+migrate-down-all:
+	$(MIGRATE) down -all
+
+migrate-version:
+	$(MIGRATE) version
+
+migrate-goto:     # usage: make migrate-goto version=3
+	$(MIGRATE) goto $(version)
+
+migrate-force:    # usage: make migrate-force version=3 (clear dirty state)
+	$(MIGRATE) force $(version)
