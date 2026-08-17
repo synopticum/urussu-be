@@ -18,14 +18,15 @@ contracts — the API is defined once, in proto.
   options) so IDEs can resolve them; refreshed by `make generate`.
 - `cmd/urussu-be/main.go` — entry point: wiring, HTTP server, graceful shutdown.
 - `internal/config` — `config.toml` loading.
+- `internal/domain` — core domain models.
+- `internal/service` — use-case layer between handlers and repositories.
 - `internal/repository/postgres` — PostgreSQL repositories (pgx pool).
 - `internal/delivery/grpc/handler` — gRPC service implementations.
 - `config.toml` — runtime configuration.
-- `db/init.sql` — PostgreSQL-compatible dump converted from the SQLite source.
-  Loaded automatically by the Postgres container on first start.
+- `migrations/` — golang-migrate SQL migrations; the database schema and
+  seed data are built by applying them (see `make migrate-up`).
 - `Dockerfile` / `docker-compose.yml` — multi-stage build and `db` + `app`
   services.
-- `sqlite/urussu.db` — original data source, read-only; never modified.
 
 ## Adding a new API
 
@@ -53,12 +54,14 @@ pinned as Go tool dependencies in `go.mod` and invoked via `go tool`.
 
 ```sh
 docker compose up --build
+make migrate-up   # first start only: create schema + seed data
 ```
 
 ### Option 2: dockerized DB + local app (recommended for development)
 
 ```sh
 docker compose up -d db   # start Postgres in the background
+make migrate-up           # first start only: create schema + seed data
 go run ./cmd/urussu-be    # run the app on the host
 ```
 
@@ -96,27 +99,33 @@ them into `pkg/third_party/` (committed to the repo, refreshed on every
 - `make build` — build the binary to `bin/urussu-be`.
 - `make run` — run locally with `config.toml`.
 - `make docker-up` / `make docker-down` — manage the compose stack.
+- `make migrate-up` / `make migrate-down` — apply / roll back DB migrations.
+- `make migrate-create name=create_xxx` — scaffold a new migration pair.
+- `make migrate-version` — show the current migration version.
 
 ## Database
 
 - **Engine:** PostgreSQL 16 (Alpine image)
-- **Credentials (dev only):** user/password/database = `urussu`/`urussu`/`urussu`
-- **Tables:** `collection`, `comments`, `dots`, `objects`, `paths`, `users`
-  (schema mirrors the SQLite source, one row per legacy document)
-- **Persistence:** data lives in the `pgdata` named volume; `db/init.sql`
-  runs only when the volume is empty (first start).
+- **Credentials (dev only):** user/password/database = `urussu`/`urussu`/`urussu_v2`
+- **Tables:** `users`, `layers`, `dots`, `images`, `objects`, `paths` —
+  schema and seed data are defined by the SQL migrations in `migrations/`
+  (golang-migrate), applied with `make migrate-up`.
+- **Persistence:** data lives in the `pgdata` named volume. Migrations are
+  applied from the host and are safe to re-run (`migrate` tracks the
+  current version in the database itself).
 
-### Resetting the database to a fresh import
+### Resetting the database
 
 ```sh
 docker compose down -v   # stop containers AND delete the data volume
-docker compose up -d db  # init.sql is re-imported on first start
+docker compose up -d db  # fresh, empty urussu_v2 database
+make migrate-up          # rebuild schema + seed data
 ```
 
 ### Inspecting the data
 
 ```sh
-docker compose exec db psql -U urussu -d urussu
+docker compose exec db psql -U urussu -d urussu_v2
 ```
 
 ### Useful commands
@@ -131,19 +140,9 @@ docker compose logs -f db   # follow Postgres logs
 
 - Credentials in `docker-compose.yml` are for local development only —
   change them before deploying anywhere.
-- The `doc` columns hold JSON as `TEXT`. When building real queries against
-  the documents, consider converting them to `JSONB`:
-  `ALTER TABLE dots ALTER COLUMN doc TYPE jsonb USING doc::jsonb;`
-- To regenerate `db/init.sql` from the SQLite source:
-
-  ```sh
-  sqlite3 sqlite/urussu.db .dump | grep -v '^PRAGMA' > db/init.sql
-  ```
 
 ## Possible improvements
 
-- Extract a `internal/service` layer between handlers and repositories once
-  business logic appears (handlers currently call repositories directly).
 - Add CORS middleware on the HTTP mux if the frontend is served from a
   different origin.
 - Serve a swagger UI (e.g. swagger-ui embedded via `go:embed`) next to the

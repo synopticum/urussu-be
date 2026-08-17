@@ -36,7 +36,7 @@ func Default() Config {
 	return Config{
 		HTTP: HTTP{Port: 8080},
 		Database: Database{
-			URL:         "postgres://urussu:urussu@localhost:5432/urussu?sslmode=disable",
+			URL:         "postgres://urussu:urussu@localhost:5432/urussu_v2?sslmode=disable",
 			SwaggerPath: "gen/openapiv2/urussu-be/v1/dots.swagger.json",
 		},
 		Log: Log{Level: "info"},

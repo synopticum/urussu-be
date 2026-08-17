@@ -25,7 +25,7 @@ func (r *DotsRepository) List(ctx context.Context, limit int32) ([]domain.Dot, e
 	}
 
 	rows, err := r.pool.Query(ctx,
-		`SELECT id, title, "shortDescription", layer FROM dots LIMIT $1`, limit)
+		`SELECT id::text, title, description, layer::text FROM dots LIMIT $1`, limit)
 	if err != nil {
 		return nil, fmt.Errorf("query dots: %w", err)
 	}

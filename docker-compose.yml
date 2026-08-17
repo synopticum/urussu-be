@@ -4,13 +4,11 @@ services:
     environment:
       POSTGRES_USER: urussu
       POSTGRES_PASSWORD: urussu
-      POSTGRES_DB: urussu
+      POSTGRES_DB: urussu_v2
     volumes:
       - pgdata:/var/lib/postgresql/data
-      # Loaded once, on first container start (empty volume).
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U urussu -d urussu"]
+      test: ["CMD-SHELL", "pg_isready -U urussu -d urussu_v2"]
       interval: 2s
       timeout: 5s
       retries: 10
@@ -23,7 +21,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://urussu:urussu@db:5432/urussu?sslmode=disable
+      DATABASE_URL: postgres://urussu:urussu@db:5432/urussu_v2?sslmode=disable
     ports:
       - "8080:8080"   # HTTP (REST + swagger.json)
 
