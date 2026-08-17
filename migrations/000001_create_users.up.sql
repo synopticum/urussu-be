@@ -7,8 +7,9 @@ CREATE TABLE users (
     last_name  TEXT NOT NULL
 );
 
-INSERT INTO users (role, email, password, first_name, last_name)
+INSERT INTO users (id, role, email, password, first_name, last_name)
 VALUES (
+    '9f27aa45-efd3-40e7-bba1-72cc9004de5f',
     'nswsergey@yandex.ru',
     '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
     'user',
