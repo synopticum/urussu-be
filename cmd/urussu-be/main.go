@@ -19,6 +19,7 @@ import (
 	"urussu-be/internal/config"
 	"urussu-be/internal/delivery/grpc/handler"
 	"urussu-be/internal/repository/postgres"
+	"urussu-be/internal/service"
 )
 
 func main() {
@@ -63,7 +64,8 @@ func run() error {
 
 	gwMux := runtime.NewServeMux()
 	dotsRepo := postgres.NewDotsRepository(pool)
-	if err := urussuv1.RegisterDotsServiceHandlerServer(ctx, gwMux, handler.NewDotsHandler(dotsRepo, log)); err != nil {
+	dotsService := service.NewDotsService(dotsRepo)
+	if err := urussuv1.RegisterDotsServiceHandlerServer(ctx, gwMux, handler.NewDotsHandler(dotsService, log)); err != nil {
 		return fmt.Errorf("register dots gateway: %w", err)
 	}
 	httpMux.Handle("/api/", gwMux)

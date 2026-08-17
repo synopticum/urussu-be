@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	urussuv1 "urussu-be/gen/urussu-be/v1"
-	"urussu-be/internal/repository/postgres"
+	"urussu-be/internal/service"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -16,16 +16,16 @@ import (
 type DotsHandler struct {
 	urussuv1.UnimplementedDotsServiceServer
 
-	repo *postgres.DotsRepository
-	log  *slog.Logger
+	svc *service.DotsService
+	log *slog.Logger
 }
 
-func NewDotsHandler(repo *postgres.DotsRepository, log *slog.Logger) *DotsHandler {
-	return &DotsHandler{repo: repo, log: log}
+func NewDotsHandler(svc *service.DotsService, log *slog.Logger) *DotsHandler {
+	return &DotsHandler{svc: svc, log: log}
 }
 
 func (h *DotsHandler) ListDots(ctx context.Context, req *urussuv1.ListDotsRequest) (*urussuv1.ListDotsResponse, error) {
-	dots, err := h.repo.List(ctx, req.GetLimit())
+	dots, err := h.svc.ListDots(ctx, req.GetLimit())
 	if err != nil {
 		h.log.ErrorContext(ctx, "failed to list dots", slog.Any("error", err))
 		return nil, status.Error(codes.Internal, "failed to list dots")

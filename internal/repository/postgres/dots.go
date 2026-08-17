@@ -6,15 +6,9 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-)
 
-// Dot is a map object stored in the `dots` table.
-type Dot struct {
-	ID               string
-	Title            string
-	ShortDescription string
-	Layer            string
-}
+	"urussu-be/internal/domain"
+)
 
 // DotsRepository reads dots from PostgreSQL.
 type DotsRepository struct {
@@ -25,7 +19,7 @@ func NewDotsRepository(pool *pgxpool.Pool) *DotsRepository {
 	return &DotsRepository{pool: pool}
 }
 
-func (r *DotsRepository) List(ctx context.Context, limit int32) ([]Dot, error) {
+func (r *DotsRepository) List(ctx context.Context, limit int32) ([]domain.Dot, error) {
 	if limit <= 0 {
 		limit = 10
 	}
@@ -37,9 +31,9 @@ func (r *DotsRepository) List(ctx context.Context, limit int32) ([]Dot, error) {
 	}
 	defer rows.Close()
 
-	var dots []Dot
+	var dots []domain.Dot
 	for rows.Next() {
-		var d Dot
+		var d domain.Dot
 		if err := rows.Scan(&d.ID, &d.Title, &d.ShortDescription, &d.Layer); err != nil {
 			return nil, fmt.Errorf("scan dot: %w", err)
 		}
