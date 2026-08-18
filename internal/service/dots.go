@@ -29,5 +29,9 @@ func (s *DotsService) GetDot(ctx context.Context, id string) (domain.Dot, error)
 }
 
 func (s *DotsService) ListDots(ctx context.Context, limit int32, layer *int32) ([]domain.Dot, error) {
+	if limit <= 0 {
+		limit = 1000
+	}
+
 	return s.repo.List(ctx, limit, layer)
 }
