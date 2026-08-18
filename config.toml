@@ -3,6 +3,8 @@ port = 8080
 
 [database]
 url = "postgres://urussu:urussu@localhost:5432/urussu_v2?sslmode=disable"
+
+[swagger]
 swagger_path = "gen/openapiv2/urussu-be/v1/dots.swagger.json"
 
 [log]
