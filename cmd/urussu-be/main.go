@@ -6,14 +6,12 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"github.com/jackc/pgx/v5/pgxpool"
 
 	"urussu-be/gen/openapiv2"
 	urussuv1 "urussu-be/gen/urussu/v1"
@@ -45,12 +43,12 @@ func run() error {
 	log.Info("config loaded",
 		slog.Int("http_port", cfg.HTTP.Port),
 		slog.String("log_level", cfg.Log.Level),
-		slog.String("database_url", redactURL(cfg.Database.URL)))
+		slog.String("database_url", postgres.RedactURL(cfg.Database.URL)))
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	pool, err := connectDB(ctx, cfg.Database.URL, log)
+	pool, err := postgres.Connect(ctx, cfg.Database.URL, log)
 	if err != nil {
 		return err
 	}
@@ -108,44 +106,6 @@ func newLogger(level string) *slog.Logger {
 	// Cannot fail: the level is validated in config.Load.
 	_ = lvl.UnmarshalText([]byte(level))
 	return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: lvl}))
-}
-
-// redactURL masks the password in a connection URL so it can be logged.
-func redactURL(raw string) string {
-	u, err := url.Parse(raw)
-	if err != nil {
-		return "<invalid url>"
-	}
-	if _, hasPassword := u.User.Password(); hasPassword {
-		u.User = url.UserPassword(u.User.Username(), "xxxxx")
-	}
-	return u.String()
-}
-
-// connectDB creates a connection pool and waits for PostgreSQL to accept
-// connections, giving a containerized database time to initialize.
-func connectDB(ctx context.Context, url string, log *slog.Logger) (*pgxpool.Pool, error) {
-	pool, err := pgxpool.New(ctx, url)
-	if err != nil {
-		return nil, fmt.Errorf("create pool: %w", err)
-	}
-
-	for attempt := 1; attempt <= 10; attempt++ {
-		if err = pool.Ping(ctx); err == nil {
-			return pool, nil
-		}
-		log.Info("database not ready, retrying", slog.Int("attempt", attempt), slog.Any("error", err))
-
-		select {
-		case <-ctx.Done():
-			pool.Close()
-			return nil, ctx.Err()
-		case <-time.After(2 * time.Second):
-		}
-	}
-
-	pool.Close()
-	return nil, fmt.Errorf("ping database: %w", err)
 }
 
 // swaggerHandler serves the OpenAPI schema embedded from the generated
