@@ -1,13 +1,19 @@
-// Package config provides service configuration: built-in defaults with
-// environment variable overrides.
+// Package config provides service configuration: built-in defaults embedded
+// from config.env (the single source shared with the Makefile and
+// docker-compose), with environment variable overrides on top.
 package config
 
 import (
+	_ "embed"
 	"fmt"
 	"log/slog"
 	"os"
 	"strconv"
+	"strings"
 )
+
+//go:embed config.env
+var defaultEnv []byte
 
 // Config is the root configuration structure.
 type Config struct {
@@ -28,21 +34,13 @@ type Log struct {
 	Level string
 }
 
-// Default returns the built-in configuration used for local development.
-func Default() Config {
-	return Config{
-		HTTP: HTTP{Port: 8080},
-		Database: Database{
-			URL: "postgres://urussu:urussu@localhost:5432/urussu_v2?sslmode=disable",
-		},
-		Log: Log{Level: "info"},
-	}
-}
-
 // Load returns the default configuration with environment variable
 // overrides applied: HTTP_PORT, DATABASE_URL, LOG_LEVEL.
 func Load() (Config, error) {
-	cfg := Default()
+	cfg, err := defaults()
+	if err != nil {
+		return Config{}, err
+	}
 
 	if v, ok := os.LookupEnv("DATABASE_URL"); ok {
 		cfg.Database.URL = v
@@ -63,6 +61,51 @@ func Load() (Config, error) {
 	}
 
 	return cfg, nil
+}
+
+// defaults parses the embedded config.env. The database URL is assembled
+// from the POSTGRES_* parts with a localhost host (local development);
+// docker-compose assembles its own URL with the db host from the same parts.
+func defaults() (Config, error) {
+	vars := parseDotenv(string(defaultEnv))
+
+	for _, key := range []string{"HTTP_PORT", "LOG_LEVEL", "POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB", "POSTGRES_PORT"} {
+		if vars[key] == "" {
+			return Config{}, fmt.Errorf("config.env: %s is required", key)
+		}
+	}
+
+	port, err := strconv.Atoi(vars["HTTP_PORT"])
+	if err != nil {
+		return Config{}, fmt.Errorf("config.env: invalid HTTP_PORT %q: %w", vars["HTTP_PORT"], err)
+	}
+	if _, err := strconv.Atoi(vars["POSTGRES_PORT"]); err != nil {
+		return Config{}, fmt.Errorf("config.env: invalid POSTGRES_PORT %q: %w", vars["POSTGRES_PORT"], err)
+	}
+
+	return Config{
+		HTTP: HTTP{Port: port},
+		Database: Database{
+			URL: fmt.Sprintf("postgres://%s:%s@localhost:%s/%s?sslmode=disable",
+				vars["POSTGRES_USER"], vars["POSTGRES_PASSWORD"], vars["POSTGRES_PORT"], vars["POSTGRES_DB"]),
+		},
+		Log: Log{Level: vars["LOG_LEVEL"]},
+	}, nil
+}
+
+// parseDotenv parses KEY=VALUE lines, ignoring blank lines and # comments.
+func parseDotenv(data string) map[string]string {
+	vars := make(map[string]string)
+	for line := range strings.Lines(data) {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		if k, v, ok := strings.Cut(line, "="); ok {
+			vars[strings.TrimSpace(k)] = strings.TrimSpace(v)
+		}
+	}
+	return vars
 }
 
 // Validate checks that the configuration is usable, so the service fails

@@ -17,7 +17,8 @@ contracts — the API is defined once, in proto.
 - `pkg/third_party/` — vendored proto imports (googleapis, grpc-gateway
   options) so IDEs can resolve them; refreshed by `make generate`.
 - `cmd/urussu-be/main.go` — entry point: wiring, HTTP server, graceful shutdown.
-- `internal/config` — configuration (built-in defaults + env overrides).
+- `internal/config` — configuration (defaults from embedded `config.env` +
+  env overrides).
 - `internal/domain` — core domain models.
 - `internal/service` — use-case layer between handlers and repositories.
 - `internal/repository/postgres` — PostgreSQL repositories (pgx pool).
@@ -72,15 +73,17 @@ go run ./cmd/urussu-be    # run the app on the host
 
 ## Configuration
 
-Built-in defaults (defined in `internal/config/config.go`) cover local
-development, so the app runs with no configuration at all. Every option
-can be overridden via an environment variable:
+Built-in defaults live in `internal/config/config.env` — the single source
+shared by the Go binary (embedded via `go:embed`), the Makefile (`include`),
+and docker-compose (`--env-file`). The app runs with no configuration at
+all. Every option can be overridden via an environment variable:
 
-- `HTTP_PORT` — HTTP port (default `8080`).
+- `HTTP_PORT` — HTTP port.
 - `DATABASE_URL` — PostgreSQL URL.
 - `LOG_LEVEL` — `debug` | `info` | `warn` | `error`.
 
-The Docker image runs on defaults plus env (see `docker-compose.yml`).
+The Docker image runs on defaults plus env (see `docker-compose.yml`,
+which assembles its `DATABASE_URL` from the same `POSTGRES_*` values).
 
 ## IDE setup (GoLand / IntelliJ)
 

@@ -1,19 +1,22 @@
+# Variables (${...}) come from internal/config/config.env — run via
+# `make docker-up` / `make docker-down`, or pass
+# `--env-file internal/config/config.env` to docker compose directly.
 services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: urussu
-      POSTGRES_PASSWORD: urussu
-      POSTGRES_DB: urussu_v2
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U urussu -d urussu_v2"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 2s
       timeout: 5s
       retries: 10
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
 
   app:
     build: .
@@ -21,9 +24,13 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://urussu:urussu@db:5432/urussu_v2?sslmode=disable
+      # Same credentials as the db service, but the in-network db host.
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
+      LOG_LEVEL: ${LOG_LEVEL}
+      # The app must listen on the same port we publish (see ports below).
+      HTTP_PORT: ${HTTP_PORT}
     ports:
-      - "8080:8080"   # HTTP (REST + swagger.json)
+      - "${HTTP_PORT}:${HTTP_PORT}"   # HTTP (REST + swagger.json)
 
 volumes:
   pgdata:
