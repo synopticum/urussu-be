@@ -26,7 +26,8 @@ const (
 type ListDotsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Maximum number of dots to return. Defaults to 10 when omitted.
-	Limit         int32 `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	Limit         int32  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	Layer         *int32 `protobuf:"varint,2,opt,name=layer,proto3,oneof" json:"layer,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -64,6 +65,13 @@ func (*ListDotsRequest) Descriptor() ([]byte, []int) {
 func (x *ListDotsRequest) GetLimit() int32 {
 	if x != nil {
 		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListDotsRequest) GetLayer() int32 {
+	if x != nil && x.Layer != nil {
+		return *x.Layer
 	}
 	return 0
 }
@@ -273,9 +281,11 @@ var File_urussu_be_v1_dots_proto protoreflect.FileDescriptor
 
 const file_urussu_be_v1_dots_proto_rawDesc = "" +
 	"\n" +
-	"\x17urussu-be/v1/dots.proto\x12\furussu_be.v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"'\n" +
+	"\x17urussu-be/v1/dots.proto\x12\furussu_be.v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"L\n" +
 	"\x0fListDotsRequest\x12\x14\n" +
-	"\x05limit\x18\x01 \x01(\x05R\x05limit\"9\n" +
+	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x19\n" +
+	"\x05layer\x18\x02 \x01(\x05H\x00R\x05layer\x88\x01\x01B\b\n" +
+	"\x06_layer\"9\n" +
 	"\x10ListDotsResponse\x12%\n" +
 	"\x04dots\x18\x01 \x03(\v2\x11.urussu_be.v1.DotR\x04dots\"\x1f\n" +
 	"\rGetDotRequest\x12\x0e\n" +
@@ -331,6 +341,7 @@ func file_urussu_be_v1_dots_proto_init() {
 	if File_urussu_be_v1_dots_proto != nil {
 		return
 	}
+	file_urussu_be_v1_dots_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

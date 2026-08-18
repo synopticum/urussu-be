@@ -17,7 +17,7 @@ import (
 // Defined on the consumer side so the handler can be tested with a stub.
 type DotsService interface {
 	GetDot(ctx context.Context, id string) (domain.Dot, error)
-	ListDots(ctx context.Context, limit int32) ([]domain.Dot, error)
+	ListDots(ctx context.Context, limit int32, layer *int32) ([]domain.Dot, error)
 }
 
 // DotsHandler implements urussuv1.DotsServiceServer.
@@ -48,7 +48,8 @@ func (h *DotsHandler) GetDot(ctx context.Context, req *urussuv1.GetDotRequest) (
 }
 
 func (h *DotsHandler) ListDots(ctx context.Context, req *urussuv1.ListDotsRequest) (*urussuv1.ListDotsResponse, error) {
-	dots, err := h.svc.ListDots(ctx, req.GetLimit())
+	dots, err := h.svc.ListDots(ctx, req.GetLimit(), req.Layer)
+
 	if err != nil {
 		h.log.ErrorContext(ctx, "failed to list dots", slog.Any("error", err))
 		return nil, status.Error(codes.Internal, "failed to list dots")

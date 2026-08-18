@@ -39,13 +39,13 @@ func (r *DotsRepository) GetByID(ctx context.Context, id string) (domain.Dot, er
 	return d, nil
 }
 
-func (r *DotsRepository) List(ctx context.Context, limit int32) ([]domain.Dot, error) {
+func (r *DotsRepository) List(ctx context.Context, limit int32, layer *int32) ([]domain.Dot, error) {
 	if limit <= 0 {
 		limit = 10
 	}
 
 	rows, err := r.pool.Query(ctx,
-		`SELECT id::text, title, description, layer::text FROM dots LIMIT $1`, limit)
+		`SELECT id::text, title, description, layer::text FROM dots WHERE ($2::int IS NULL OR layer = $2) LIMIT $1`, limit, layer)
 	if err != nil {
 		return nil, fmt.Errorf("query dots: %w", err)
 	}
