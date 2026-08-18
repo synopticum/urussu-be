@@ -70,7 +70,7 @@ func run() error {
 	}
 	httpMux.Handle("/api/", gwMux)
 
-	httpMux.Handle("GET /swagger.json", swaggerHandler(cfg.Database.SwaggerPath, log))
+	httpMux.Handle("GET /swagger.json", swaggerHandler(cfg.Swagger.Path, log))
 
 	httpAddr := fmt.Sprintf(":%d", cfg.HTTP.Port)
 	httpServer := &http.Server{

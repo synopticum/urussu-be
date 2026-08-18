@@ -13,6 +13,7 @@ import (
 type Config struct {
 	HTTP     HTTP     `toml:"http"`
 	Database Database `toml:"database"`
+	Swagger  Swagger  `toml:"swagger"`
 	Log      Log      `toml:"log"`
 }
 
@@ -22,9 +23,12 @@ type HTTP struct {
 
 type Database struct {
 	URL string `toml:"url"`
-	// SwaggerPath is the path to the generated OpenAPI schema,
+}
+
+type Swagger struct {
+	// Path is the path to the generated OpenAPI schema,
 	// served over HTTP at /swagger.json.
-	SwaggerPath string `toml:"swagger_path"`
+	Path string `toml:"swagger_path"`
 }
 
 type Log struct {
@@ -36,8 +40,10 @@ func Default() Config {
 	return Config{
 		HTTP: HTTP{Port: 8080},
 		Database: Database{
-			URL:         "postgres://urussu:urussu@localhost:5432/urussu_v2?sslmode=disable",
-			SwaggerPath: "gen/openapiv2/urussu/v1/dots.swagger.json",
+			URL: "postgres://urussu:urussu@localhost:5432/urussu_v2?sslmode=disable",
+		},
+		Swagger: Swagger{
+			Path: "gen/openapiv2/urussu/v1/dots.swagger.json",
 		},
 		Log: Log{Level: "info"},
 	}
