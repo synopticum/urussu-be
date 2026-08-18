@@ -13,10 +13,10 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
-	"urussu-be/gen/openapiv2"
 	urussuv1 "urussu-be/gen/urussu/v1"
 	"urussu-be/internal/config"
 	"urussu-be/internal/handlers/grpc"
+	"urussu-be/internal/handlers/swagger"
 	"urussu-be/internal/repository/postgres"
 	"urussu-be/internal/service"
 )
@@ -67,7 +67,7 @@ func run() error {
 	}
 	httpMux.Handle("/api/", gwMux)
 
-	httpMux.Handle("GET /swagger.json", swaggerHandler())
+	httpMux.Handle("GET /swagger.json", swagger.Handler())
 
 	httpAddr := fmt.Sprintf(":%d", cfg.HTTP.Port)
 	httpServer := &http.Server{
@@ -106,13 +106,4 @@ func newLogger(level string) *slog.Logger {
 	// Cannot fail: the level is validated in config.Load.
 	_ = lvl.UnmarshalText([]byte(level))
 	return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: lvl}))
-}
-
-// swaggerHandler serves the OpenAPI schema embedded from the generated
-// gen/openapiv2 output (see gen/openapiv2/embed.go).
-func swaggerHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(openapiv2.SwaggerSchema)
-	})
 }
