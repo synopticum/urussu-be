@@ -3,8 +3,10 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"urussu-be/internal/domain"
@@ -17,6 +19,24 @@ type DotsRepository struct {
 
 func NewDotsRepository(pool *pgxpool.Pool) *DotsRepository {
 	return &DotsRepository{pool: pool}
+}
+
+func (r *DotsRepository) GetByID(ctx context.Context, id string) (domain.Dot, error) {
+	var d domain.Dot
+
+	err := r.pool.QueryRow(ctx,
+		`SELECT id::text, title, description, layer::text FROM dots WHERE id = $1`, id).
+		Scan(&d.ID, &d.Title, &d.ShortDescription, &d.Layer)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.Dot{}, domain.ErrNotFound
+	}
+
+	if err != nil {
+		return domain.Dot{}, fmt.Errorf("query dot %s: %w", id, err)
+	}
+
+	return d, nil
 }
 
 func (r *DotsRepository) List(ctx context.Context, limit int32) ([]domain.Dot, error) {

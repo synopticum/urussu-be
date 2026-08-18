@@ -25,6 +25,13 @@ service DotsService {
       get: "/api/v1/dots"
     };
   }
+
+  // GetDot returns a single dot by its ID.
+  rpc GetDot(GetDotRequest) returns (GetDotResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/dots/{id}"
+    };
+  }
 }
 
 message ListDotsRequest {
@@ -34,6 +41,15 @@ message ListDotsRequest {
 
 message ListDotsResponse {
   repeated Dot dots = 1;
+}
+
+message GetDotRequest {
+  // ID of the dot to return.
+  string id = 1;
+}
+
+message GetDotResponse {
+  Dot dot = 1;
 }
 
 message Dot {

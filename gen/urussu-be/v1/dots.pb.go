@@ -112,6 +112,95 @@ func (x *ListDotsResponse) GetDots() []*Dot {
 	return nil
 }
 
+type GetDotRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the dot to return.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDotRequest) Reset() {
+	*x = GetDotRequest{}
+	mi := &file_urussu_be_v1_dots_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDotRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDotRequest) ProtoMessage() {}
+
+func (x *GetDotRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_urussu_be_v1_dots_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDotRequest.ProtoReflect.Descriptor instead.
+func (*GetDotRequest) Descriptor() ([]byte, []int) {
+	return file_urussu_be_v1_dots_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetDotRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetDotResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Dot           *Dot                   `protobuf:"bytes,1,opt,name=dot,proto3" json:"dot,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDotResponse) Reset() {
+	*x = GetDotResponse{}
+	mi := &file_urussu_be_v1_dots_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDotResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDotResponse) ProtoMessage() {}
+
+func (x *GetDotResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_urussu_be_v1_dots_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDotResponse.ProtoReflect.Descriptor instead.
+func (*GetDotResponse) Descriptor() ([]byte, []int) {
+	return file_urussu_be_v1_dots_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetDotResponse) GetDot() *Dot {
+	if x != nil {
+		return x.Dot
+	}
+	return nil
+}
+
 type Dot struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -124,7 +213,7 @@ type Dot struct {
 
 func (x *Dot) Reset() {
 	*x = Dot{}
-	mi := &file_urussu_be_v1_dots_proto_msgTypes[2]
+	mi := &file_urussu_be_v1_dots_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -136,7 +225,7 @@ func (x *Dot) String() string {
 func (*Dot) ProtoMessage() {}
 
 func (x *Dot) ProtoReflect() protoreflect.Message {
-	mi := &file_urussu_be_v1_dots_proto_msgTypes[2]
+	mi := &file_urussu_be_v1_dots_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -149,7 +238,7 @@ func (x *Dot) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Dot.ProtoReflect.Descriptor instead.
 func (*Dot) Descriptor() ([]byte, []int) {
-	return file_urussu_be_v1_dots_proto_rawDescGZIP(), []int{2}
+	return file_urussu_be_v1_dots_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Dot) GetId() string {
@@ -188,14 +277,19 @@ const file_urussu_be_v1_dots_proto_rawDesc = "" +
 	"\x0fListDotsRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\"9\n" +
 	"\x10ListDotsResponse\x12%\n" +
-	"\x04dots\x18\x01 \x03(\v2\x11.urussu_be.v1.DotR\x04dots\"n\n" +
+	"\x04dots\x18\x01 \x03(\v2\x11.urussu_be.v1.DotR\x04dots\"\x1f\n" +
+	"\rGetDotRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"5\n" +
+	"\x0eGetDotResponse\x12#\n" +
+	"\x03dot\x18\x01 \x01(\v2\x11.urussu_be.v1.DotR\x03dot\"n\n" +
 	"\x03Dot\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12+\n" +
 	"\x11short_description\x18\x03 \x01(\tR\x10shortDescription\x12\x14\n" +
-	"\x05layer\x18\x04 \x01(\tR\x05layer2n\n" +
+	"\x05layer\x18\x04 \x01(\tR\x05layer2\xce\x01\n" +
 	"\vDotsService\x12_\n" +
-	"\bListDots\x12\x1d.urussu_be.v1.ListDotsRequest\x1a\x1e.urussu_be.v1.ListDotsResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/api/v1/dotsBg\x92A?\x12\x16\n" +
+	"\bListDots\x12\x1d.urussu_be.v1.ListDotsRequest\x1a\x1e.urussu_be.v1.ListDotsResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/api/v1/dots\x12^\n" +
+	"\x06GetDot\x12\x1b.urussu_be.v1.GetDotRequest\x1a\x1c.urussu_be.v1.GetDotResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/api/v1/dots/{id}Bg\x92A?\x12\x16\n" +
 	"\rurussu-be API2\x051.0.0*\x01\x012\x10application/json:\x10application/jsonZ#urussu-be/gen/urussu-be/v1;urussuv1b\x06proto3"
 
 var (
@@ -210,21 +304,26 @@ func file_urussu_be_v1_dots_proto_rawDescGZIP() []byte {
 	return file_urussu_be_v1_dots_proto_rawDescData
 }
 
-var file_urussu_be_v1_dots_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_urussu_be_v1_dots_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_urussu_be_v1_dots_proto_goTypes = []any{
 	(*ListDotsRequest)(nil),  // 0: urussu_be.v1.ListDotsRequest
 	(*ListDotsResponse)(nil), // 1: urussu_be.v1.ListDotsResponse
-	(*Dot)(nil),              // 2: urussu_be.v1.Dot
+	(*GetDotRequest)(nil),    // 2: urussu_be.v1.GetDotRequest
+	(*GetDotResponse)(nil),   // 3: urussu_be.v1.GetDotResponse
+	(*Dot)(nil),              // 4: urussu_be.v1.Dot
 }
 var file_urussu_be_v1_dots_proto_depIdxs = []int32{
-	2, // 0: urussu_be.v1.ListDotsResponse.dots:type_name -> urussu_be.v1.Dot
-	0, // 1: urussu_be.v1.DotsService.ListDots:input_type -> urussu_be.v1.ListDotsRequest
-	1, // 2: urussu_be.v1.DotsService.ListDots:output_type -> urussu_be.v1.ListDotsResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	4, // 0: urussu_be.v1.ListDotsResponse.dots:type_name -> urussu_be.v1.Dot
+	4, // 1: urussu_be.v1.GetDotResponse.dot:type_name -> urussu_be.v1.Dot
+	0, // 2: urussu_be.v1.DotsService.ListDots:input_type -> urussu_be.v1.ListDotsRequest
+	2, // 3: urussu_be.v1.DotsService.GetDot:input_type -> urussu_be.v1.GetDotRequest
+	1, // 4: urussu_be.v1.DotsService.ListDots:output_type -> urussu_be.v1.ListDotsResponse
+	3, // 5: urussu_be.v1.DotsService.GetDot:output_type -> urussu_be.v1.GetDotResponse
+	4, // [4:6] is the sub-list for method output_type
+	2, // [2:4] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_urussu_be_v1_dots_proto_init() }
@@ -238,7 +337,7 @@ func file_urussu_be_v1_dots_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_urussu_be_v1_dots_proto_rawDesc), len(file_urussu_be_v1_dots_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

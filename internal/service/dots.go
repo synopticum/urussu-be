@@ -11,6 +11,7 @@ import (
 // DotsRepository is the storage contract required by DotsService.
 // Defined on the consumer side so the service can be tested with a stub.
 type DotsRepository interface {
+	GetByID(ctx context.Context, id string) (domain.Dot, error)
 	List(ctx context.Context, limit int32) ([]domain.Dot, error)
 }
 
@@ -21,6 +22,10 @@ type DotsService struct {
 
 func NewDotsService(repo DotsRepository) *DotsService {
 	return &DotsService{repo: repo}
+}
+
+func (s *DotsService) GetDot(ctx context.Context, id string) (domain.Dot, error) {
+	return s.repo.GetByID(ctx, id)
 }
 
 func (s *DotsService) ListDots(ctx context.Context, limit int32) ([]domain.Dot, error) {

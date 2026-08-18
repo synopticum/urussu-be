@@ -3,6 +3,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 
 	urussuv1 "urussu-be/gen/urussu-be/v1"
@@ -15,6 +16,7 @@ import (
 // DotsService is the use-case contract required by DotsHandler.
 // Defined on the consumer side so the handler can be tested with a stub.
 type DotsService interface {
+	GetDot(ctx context.Context, id string) (domain.Dot, error)
 	ListDots(ctx context.Context, limit int32) ([]domain.Dot, error)
 }
 
@@ -30,6 +32,21 @@ func NewDotsHandler(svc DotsService, log *slog.Logger) *DotsHandler {
 	return &DotsHandler{svc: svc, log: log}
 }
 
+func (h *DotsHandler) GetDot(ctx context.Context, req *urussuv1.GetDotRequest) (*urussuv1.GetDotResponse, error) {
+	d, err := h.svc.GetDot(ctx, req.GetId())
+
+	if errors.Is(err, domain.ErrNotFound) {
+		return nil, status.Errorf(codes.NotFound, "dot %s not found", req.GetId())
+	}
+
+	if err != nil {
+		h.log.ErrorContext(ctx, "failed to get dot", slog.String("id", req.GetId()), slog.Any("error", err))
+		return nil, status.Error(codes.Internal, "failed to get dot")
+	}
+
+	return &urussuv1.GetDotResponse{Dot: dotToProto(d)}, nil
+}
+
 func (h *DotsHandler) ListDots(ctx context.Context, req *urussuv1.ListDotsRequest) (*urussuv1.ListDotsResponse, error) {
 	dots, err := h.svc.ListDots(ctx, req.GetLimit())
 	if err != nil {
@@ -39,13 +56,17 @@ func (h *DotsHandler) ListDots(ctx context.Context, req *urussuv1.ListDotsReques
 
 	resp := &urussuv1.ListDotsResponse{Dots: make([]*urussuv1.Dot, 0, len(dots))}
 	for _, d := range dots {
-		resp.Dots = append(resp.Dots, &urussuv1.Dot{
-			Id:               d.ID,
-			Title:            d.Title,
-			ShortDescription: d.ShortDescription,
-			Layer:            d.Layer,
-		})
+		resp.Dots = append(resp.Dots, dotToProto(d))
 	}
 
 	return resp, nil
+}
+
+func dotToProto(d domain.Dot) *urussuv1.Dot {
+	return &urussuv1.Dot{
+		Id:               d.ID,
+		Title:            d.Title,
+		ShortDescription: d.ShortDescription,
+		Layer:            d.Layer,
+	}
 }

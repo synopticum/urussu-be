@@ -52,6 +52,38 @@
           "DotsService"
         ]
       }
+    },
+    "/api/v1/dots/{id}": {
+      "get": {
+        "summary": "GetDot returns a single dot by its ID.",
+        "operationId": "DotsService_GetDot",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetDotResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the dot to return.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DotsService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -97,6 +129,14 @@
         },
         "layer": {
           "type": "string"
+        }
+      }
+    },
+    "v1GetDotResponse": {
+      "type": "object",
+      "properties": {
+        "dot": {
+          "$ref": "#/definitions/v1Dot"
         }
       }
     },

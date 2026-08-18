@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	DotsService_ListDots_FullMethodName = "/urussu_be.v1.DotsService/ListDots"
+	DotsService_GetDot_FullMethodName   = "/urussu_be.v1.DotsService/GetDot"
 )
 
 // DotsServiceClient is the client API for DotsService service.
@@ -30,6 +31,8 @@ const (
 type DotsServiceClient interface {
 	// ListDots returns dots from the database.
 	ListDots(ctx context.Context, in *ListDotsRequest, opts ...grpc.CallOption) (*ListDotsResponse, error)
+	// GetDot returns a single dot by its ID.
+	GetDot(ctx context.Context, in *GetDotRequest, opts ...grpc.CallOption) (*GetDotResponse, error)
 }
 
 type dotsServiceClient struct {
@@ -50,6 +53,16 @@ func (c *dotsServiceClient) ListDots(ctx context.Context, in *ListDotsRequest, o
 	return out, nil
 }
 
+func (c *dotsServiceClient) GetDot(ctx context.Context, in *GetDotRequest, opts ...grpc.CallOption) (*GetDotResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDotResponse)
+	err := c.cc.Invoke(ctx, DotsService_GetDot_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DotsServiceServer is the server API for DotsService service.
 // All implementations must embed UnimplementedDotsServiceServer
 // for forward compatibility.
@@ -58,6 +71,8 @@ func (c *dotsServiceClient) ListDots(ctx context.Context, in *ListDotsRequest, o
 type DotsServiceServer interface {
 	// ListDots returns dots from the database.
 	ListDots(context.Context, *ListDotsRequest) (*ListDotsResponse, error)
+	// GetDot returns a single dot by its ID.
+	GetDot(context.Context, *GetDotRequest) (*GetDotResponse, error)
 	mustEmbedUnimplementedDotsServiceServer()
 }
 
@@ -70,6 +85,9 @@ type UnimplementedDotsServiceServer struct{}
 
 func (UnimplementedDotsServiceServer) ListDots(context.Context, *ListDotsRequest) (*ListDotsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListDots not implemented")
+}
+func (UnimplementedDotsServiceServer) GetDot(context.Context, *GetDotRequest) (*GetDotResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetDot not implemented")
 }
 func (UnimplementedDotsServiceServer) mustEmbedUnimplementedDotsServiceServer() {}
 func (UnimplementedDotsServiceServer) testEmbeddedByValue()                     {}
@@ -110,6 +128,24 @@ func _DotsService_ListDots_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DotsService_GetDot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DotsServiceServer).GetDot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DotsService_GetDot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DotsServiceServer).GetDot(ctx, req.(*GetDotRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DotsService_ServiceDesc is the grpc.ServiceDesc for DotsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -120,6 +156,10 @@ var DotsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListDots",
 			Handler:    _DotsService_ListDots_Handler,
+		},
+		{
+			MethodName: "GetDot",
+			Handler:    _DotsService_GetDot_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
