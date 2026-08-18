@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
@@ -37,6 +38,11 @@ func run() error {
 
 	log := newLogger(cfg.Log.Level)
 	slog.SetDefault(log)
+
+	log.Info("config loaded",
+		slog.Int("http_port", cfg.HTTP.Port),
+		slog.String("log_level", cfg.Log.Level),
+		slog.String("database_url", redactURL(cfg.Database.URL)))
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -99,6 +105,18 @@ func newLogger(level string) *slog.Logger {
 	// Cannot fail: the level is validated in config.Load.
 	_ = lvl.UnmarshalText([]byte(level))
 	return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: lvl}))
+}
+
+// redactURL masks the password in a connection URL so it can be logged.
+func redactURL(raw string) string {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return "<invalid url>"
+	}
+	if _, hasPassword := u.User.Password(); hasPassword {
+		u.User = url.UserPassword(u.User.Username(), "xxxxx")
+	}
+	return u.String()
 }
 
 // connectDB creates a connection pool and waits for PostgreSQL to accept
