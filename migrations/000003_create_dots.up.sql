@@ -3,7 +3,7 @@ CREATE TABLE dots (
     user_id     UUID     NOT NULL REFERENCES users (id),
     title       TEXT     NOT NULL DEFAULT '',
     description TEXT     NOT NULL DEFAULT '',
-    coordinates TEXT     NOT NULL,
+    coordinates JSONB    NOT NULL,
     layer       SMALLINT NOT NULL REFERENCES layers (id)
 );
 
