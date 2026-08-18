@@ -94,7 +94,9 @@ func defaults() (Config, error) {
 	}, nil
 }
 
-// parseDotenv parses KEY=VALUE lines, ignoring blank lines and # comments.
+// parseDotenv parses KEY=VALUE lines, ignoring blank lines and comments.
+// A comment starts at '#' at the beginning of a line or preceded by
+// whitespace, so values may contain '#' itself (e.g. in passwords).
 func parseDotenv(data string) map[string]string {
 	vars := make(map[string]string)
 	for line := range strings.Lines(data) {
@@ -103,6 +105,7 @@ func parseDotenv(data string) map[string]string {
 			continue
 		}
 		if k, v, ok := strings.Cut(line, "="); ok {
+			v, _, _ = strings.Cut(v, " #")
 			vars[strings.TrimSpace(k)] = strings.TrimSpace(v)
 		}
 	}
