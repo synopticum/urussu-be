@@ -7,9 +7,10 @@ COPY . .
 RUN CGO_ENABLED=0 go build -o /server ./cmd/urussu-be
 
 FROM alpine:3.21
+
 RUN apk add --no-cache ca-certificates
 WORKDIR /app
+# The swagger schema is embedded in the binary; nothing else is needed.
 COPY --from=build /server /app/server
-COPY gen/openapiv2 /app/gen/openapiv2
-# No config file baked in: built-in defaults + env overrides (see compose).
+
 ENTRYPOINT ["/app/server"]

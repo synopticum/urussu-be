@@ -14,6 +14,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"urussu-be/gen/openapiv2"
 	urussuv1 "urussu-be/gen/urussu/v1"
 	"urussu-be/internal/config"
 	"urussu-be/internal/handlers/grpc"
@@ -59,7 +60,7 @@ func run() error {
 	}
 	httpMux.Handle("/api/", gwMux)
 
-	httpMux.Handle("GET /swagger.json", swaggerHandler(cfg.Swagger.Path, log))
+	httpMux.Handle("GET /swagger.json", swaggerHandler())
 
 	httpAddr := fmt.Sprintf(":%d", cfg.HTTP.Port)
 	httpServer := &http.Server{
@@ -126,18 +127,11 @@ func connectDB(ctx context.Context, url string, log *slog.Logger) (*pgxpool.Pool
 	return nil, fmt.Errorf("ping database: %w", err)
 }
 
-// swaggerHandler serves the generated OpenAPI schema. If the schema file is
-// missing (e.g. `make generate` was not run), it degrades to a 404.
-func swaggerHandler(path string, log *slog.Logger) http.Handler {
-	schema, err := os.ReadFile(path)
-	if err != nil {
-		log.Warn("swagger schema not available, /swagger.json disabled",
-			slog.String("path", path), slog.Any("error", err))
-		return http.NotFoundHandler()
-	}
-
+// swaggerHandler serves the OpenAPI schema embedded from the generated
+// gen/openapiv2 output (see gen/openapiv2/embed.go).
+func swaggerHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(schema)
+		_, _ = w.Write(openapiv2.SwaggerSchema)
 	})
 }

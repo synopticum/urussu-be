@@ -13,7 +13,6 @@ import (
 type Config struct {
 	HTTP     HTTP
 	Database Database
-	Swagger  Swagger
 	Log      Log
 }
 
@@ -23,12 +22,6 @@ type HTTP struct {
 
 type Database struct {
 	URL string
-}
-
-type Swagger struct {
-	// Path is the path to the generated OpenAPI schema,
-	// served over HTTP at /swagger.json.
-	Path string
 }
 
 type Log struct {
@@ -42,15 +35,12 @@ func Default() Config {
 		Database: Database{
 			URL: "postgres://urussu:urussu@localhost:5432/urussu_v2?sslmode=disable",
 		},
-		Swagger: Swagger{
-			Path: "gen/openapiv2/urussu/v1/dots.swagger.json",
-		},
 		Log: Log{Level: "info"},
 	}
 }
 
 // Load returns the default configuration with environment variable
-// overrides applied: HTTP_PORT, DATABASE_URL, SWAGGER_PATH, LOG_LEVEL.
+// overrides applied: HTTP_PORT, DATABASE_URL, LOG_LEVEL.
 func Load() (Config, error) {
 	cfg := Default()
 
@@ -63,9 +53,6 @@ func Load() (Config, error) {
 			return Config{}, fmt.Errorf("invalid HTTP_PORT %q: %w", v, err)
 		}
 		cfg.HTTP.Port = port
-	}
-	if v, ok := os.LookupEnv("SWAGGER_PATH"); ok {
-		cfg.Swagger.Path = v
 	}
 	if v, ok := os.LookupEnv("LOG_LEVEL"); ok {
 		cfg.Log.Level = v

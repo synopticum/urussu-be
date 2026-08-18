@@ -12,8 +12,8 @@ contracts — the API is defined once, in proto.
 - `buf.yaml` / `buf.gen.yaml` / `buf.lock` — Buf workspace, plugin and
   dependency configuration.
 - `gen/` — generated Go code (`*.pb.go`, `*_grpc.pb.go`, `*.pb.gw.go`).
-- `gen/openapiv2/` — generated OpenAPI (swagger 2.0) schema, served at
-  runtime as `/swagger.json`.
+- `gen/openapiv2/` — generated OpenAPI (swagger 2.0) schema, embedded into
+  the binary (`embed.go`) and served as `/swagger.json`.
 - `pkg/third_party/` — vendored proto imports (googleapis, grpc-gateway
   options) so IDEs can resolve them; refreshed by `make generate`.
 - `cmd/urussu-be/main.go` — entry point: wiring, HTTP server, graceful shutdown.
@@ -78,7 +78,6 @@ can be overridden via an environment variable:
 
 - `HTTP_PORT` — HTTP port (default `8080`).
 - `DATABASE_URL` — PostgreSQL URL.
-- `SWAGGER_PATH` — path to the generated OpenAPI schema.
 - `LOG_LEVEL` — `debug` | `info` | `warn` | `error`.
 
 The Docker image runs on defaults plus env (see `docker-compose.yml`).
