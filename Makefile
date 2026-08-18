@@ -16,7 +16,7 @@ build:
 	go build -o bin/urussu-be ./cmd/urussu-be
 
 run:
-	go run ./cmd/urussu-be -config config.toml
+	go run ./cmd/urussu-be
 
 docker-up:
 	docker compose up --build

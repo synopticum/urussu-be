@@ -17,12 +17,11 @@ contracts — the API is defined once, in proto.
 - `pkg/third_party/` — vendored proto imports (googleapis, grpc-gateway
   options) so IDEs can resolve them; refreshed by `make generate`.
 - `cmd/urussu-be/main.go` — entry point: wiring, HTTP server, graceful shutdown.
-- `internal/config` — `config.toml` loading.
+- `internal/config` — configuration (built-in defaults + env overrides).
 - `internal/domain` — core domain models.
 - `internal/service` — use-case layer between handlers and repositories.
 - `internal/repository/postgres` — PostgreSQL repositories (pgx pool).
 - `internal/handlers/grpc` — gRPC service implementations.
-- `config.toml` — runtime configuration.
 - `migrations/` — golang-migrate SQL migrations; the database schema and
   seed data are built by applying them (see `make migrate-up`).
 - `Dockerfile` / `docker-compose.yml` — multi-stage build and `db` + `app`
@@ -73,13 +72,16 @@ go run ./cmd/urussu-be    # run the app on the host
 
 ## Configuration
 
-The app is configured via `config.toml` (path can be changed with the
-`-config` flag). See `config.toml` for the available options: HTTP
-port, database URL, swagger schema path, log level.
+Built-in defaults (defined in `internal/config/config.go`) cover local
+development, so the app runs with no configuration at all. Every option
+can be overridden via an environment variable:
 
-For container deployments, `DATABASE_URL` and `HTTP_PORT`
-environment variables override the file values. If the default `config.toml`
-is missing, built-in defaults are used.
+- `HTTP_PORT` — HTTP port (default `8080`).
+- `DATABASE_URL` — PostgreSQL URL.
+- `SWAGGER_PATH` — path to the generated OpenAPI schema.
+- `LOG_LEVEL` — `debug` | `info` | `warn` | `error`.
+
+The Docker image runs on defaults plus env (see `docker-compose.yml`).
 
 ## IDE setup (GoLand / IntelliJ)
 
@@ -97,7 +99,7 @@ them into `pkg/third_party/` (committed to the repo, refreshed on every
 - `make generate` — regenerate Go code + swagger schema from proto.
 - `make lint` — lint the proto files (`buf lint`).
 - `make build` — build the binary to `bin/urussu-be`.
-- `make run` — run locally with `config.toml`.
+- `make run` — run locally with built-in defaults.
 - `make docker-up` / `make docker-down` — manage the compose stack.
 - `make migrate-up` / `make migrate-down` — apply / roll back DB migrations.
 - `make migrate-create name=create_xxx` — scaffold a new migration pair.

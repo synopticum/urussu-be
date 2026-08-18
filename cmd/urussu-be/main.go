@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -30,17 +29,7 @@ func main() {
 }
 
 func run() error {
-	configPath := flag.String("config", "config.toml", "path to the TOML config file")
-	flag.Parse()
-
-	configSet := false
-	flag.Visit(func(f *flag.Flag) {
-		if f.Name == "config" {
-			configSet = true
-		}
-	})
-
-	cfg, err := config.Load(*configPath, configSet)
+	cfg, err := config.Load()
 	if err != nil {
 		return err
 	}

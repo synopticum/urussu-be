@@ -3,7 +3,6 @@ module urussu-be
 go 1.26
 
 require (
-	github.com/BurntSushi/toml v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0
 	github.com/jackc/pgx/v5 v5.10.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d
