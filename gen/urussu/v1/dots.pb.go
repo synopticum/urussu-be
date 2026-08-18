@@ -25,7 +25,7 @@ const (
 
 type ListDotsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Maximum number of dots to return. Defaults to 10 when omitted.
+	// Maximum number of dots to return. Defaults to 1000 when omitted.
 	Limit         int32  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
 	Layer         *int32 `protobuf:"varint,2,opt,name=layer,proto3,oneof" json:"layer,omitempty"`
 	unknownFields protoimpl.UnknownFields

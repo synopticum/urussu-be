@@ -41,7 +41,7 @@
         "parameters": [
           {
             "name": "limit",
-            "description": "Maximum number of dots to return. Defaults to 10 when omitted.",
+            "description": "Maximum number of dots to return. Defaults to 1000 when omitted.",
             "in": "query",
             "required": false,
             "type": "integer",
