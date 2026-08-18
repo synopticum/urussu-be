@@ -25,7 +25,10 @@ func (r *DotsRepository) GetByID(ctx context.Context, id string) (domain.Dot, er
 	var d domain.Dot
 
 	err := r.pool.QueryRow(ctx,
-		`SELECT id::text, title, description, layer::text FROM dots WHERE id = $1`, id).
+		`SELECT d.id::text, d.title, d.description, l.name
+		 FROM dots d
+		 JOIN layers l ON l.id = d.layer
+		 WHERE d.id = $1`, id).
 		Scan(&d.ID, &d.Title, &d.ShortDescription, &d.Layer)
 
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -39,9 +42,13 @@ func (r *DotsRepository) GetByID(ctx context.Context, id string) (domain.Dot, er
 	return d, nil
 }
 
-func (r *DotsRepository) List(ctx context.Context, limit int32, layer *int32) ([]domain.Dot, error) {
+func (r *DotsRepository) List(ctx context.Context, limit int32, layer string) ([]domain.Dot, error) {
 	rows, err := r.pool.Query(ctx,
-		`SELECT id::text, title, description, layer::text FROM dots WHERE ($2::int IS NULL OR layer = $2) LIMIT $1`, limit, layer)
+		`SELECT d.id::text, d.title, d.description, l.name
+		 FROM dots d
+		 JOIN layers l ON l.id = d.layer
+		 WHERE ($2::text = '' OR l.name = $2)
+		 LIMIT $1`, limit, layer)
 	if err != nil {
 		return nil, fmt.Errorf("query dots: %w", err)
 	}

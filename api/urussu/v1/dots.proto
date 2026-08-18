@@ -37,7 +37,8 @@ service DotsService {
 message ListDotsRequest {
   // Maximum number of dots to return. Defaults to 1000 when omitted.
   int32 limit = 1;
-  optional int32 layer = 2;
+  // Filter by layer name (e.g. "1980"). Returns dots from all layers when omitted.
+  optional string layer = 2;
 }
 
 message ListDotsResponse {

@@ -12,7 +12,7 @@ import (
 // Defined on the consumer side so the service can be tested with a stub.
 type DotsRepository interface {
 	GetByID(ctx context.Context, id string) (domain.Dot, error)
-	List(ctx context.Context, limit int32, layer *int32) ([]domain.Dot, error)
+	List(ctx context.Context, limit int32, layer string) ([]domain.Dot, error)
 }
 
 // DotsService implements the dots use-cases.
@@ -28,7 +28,7 @@ func (s *DotsService) GetDot(ctx context.Context, id string) (domain.Dot, error)
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *DotsService) ListDots(ctx context.Context, limit int32, layer *int32) ([]domain.Dot, error) {
+func (s *DotsService) ListDots(ctx context.Context, limit int32, layer string) ([]domain.Dot, error) {
 	if limit <= 0 {
 		limit = 1000
 	}

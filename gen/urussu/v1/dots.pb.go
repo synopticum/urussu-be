@@ -26,8 +26,9 @@ const (
 type ListDotsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Maximum number of dots to return. Defaults to 1000 when omitted.
-	Limit         int32  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
-	Layer         *int32 `protobuf:"varint,2,opt,name=layer,proto3,oneof" json:"layer,omitempty"`
+	Limit int32 `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	// Filter by layer name (e.g. "1980"). Returns dots from all layers when omitted.
+	Layer         *string `protobuf:"bytes,2,opt,name=layer,proto3,oneof" json:"layer,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -69,11 +70,11 @@ func (x *ListDotsRequest) GetLimit() int32 {
 	return 0
 }
 
-func (x *ListDotsRequest) GetLayer() int32 {
+func (x *ListDotsRequest) GetLayer() string {
 	if x != nil && x.Layer != nil {
 		return *x.Layer
 	}
-	return 0
+	return ""
 }
 
 type ListDotsResponse struct {
@@ -284,7 +285,7 @@ const file_urussu_v1_dots_proto_rawDesc = "" +
 	"\x14urussu/v1/dots.proto\x12\turussu.v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"L\n" +
 	"\x0fListDotsRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x19\n" +
-	"\x05layer\x18\x02 \x01(\x05H\x00R\x05layer\x88\x01\x01B\b\n" +
+	"\x05layer\x18\x02 \x01(\tH\x00R\x05layer\x88\x01\x01B\b\n" +
 	"\x06_layer\"6\n" +
 	"\x10ListDotsResponse\x12\"\n" +
 	"\x04dots\x18\x01 \x03(\v2\x0e.urussu.v1.DotR\x04dots\"\x1f\n" +

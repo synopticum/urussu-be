@@ -49,10 +49,10 @@
           },
           {
             "name": "layer",
+            "description": "Filter by layer name (e.g. \"1980\"). Returns dots from all layers when omitted.",
             "in": "query",
             "required": false,
-            "type": "integer",
-            "format": "int32"
+            "type": "string"
           }
         ],
         "tags": [
