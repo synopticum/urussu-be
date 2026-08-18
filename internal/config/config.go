@@ -5,6 +5,7 @@ package config
 
 import (
 	_ "embed"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -115,7 +116,7 @@ func (c Config) Validate() error {
 		return fmt.Errorf("http port %d out of range 1-65535", c.HTTP.Port)
 	}
 	if c.Database.URL == "" {
-		return fmt.Errorf("database url must not be empty")
+		return errors.New("database url must not be empty")
 	}
 	var lvl slog.Level
 	if err := lvl.UnmarshalText([]byte(c.Log.Level)); err != nil {

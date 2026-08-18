@@ -25,7 +25,10 @@ import (
 
 func main() {
 	if err := run(); err != nil {
-		slog.Error("fatal", slog.Any("error", err))
+		// run() may have failed before the configured logger was installed
+		// (e.g. config.Load), so log through an equivalent one to keep the
+		// output format consistent.
+		newLogger(slog.LevelInfo.String()).Error("fatal", slog.Any("error", err))
 		os.Exit(1)
 	}
 }
