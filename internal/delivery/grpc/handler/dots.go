@@ -6,21 +6,27 @@ import (
 	"log/slog"
 
 	urussuv1 "urussu-be/gen/urussu-be/v1"
-	"urussu-be/internal/service"
+	"urussu-be/internal/domain"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
+// DotsService is the use-case contract required by DotsHandler.
+// Defined on the consumer side so the handler can be tested with a stub.
+type DotsService interface {
+	ListDots(ctx context.Context, limit int32) ([]domain.Dot, error)
+}
+
 // DotsHandler implements urussuv1.DotsServiceServer.
 type DotsHandler struct {
 	urussuv1.UnimplementedDotsServiceServer
 
-	svc *service.DotsService
+	svc DotsService
 	log *slog.Logger
 }
 
-func NewDotsHandler(svc *service.DotsService, log *slog.Logger) *DotsHandler {
+func NewDotsHandler(svc DotsService, log *slog.Logger) *DotsHandler {
 	return &DotsHandler{svc: svc, log: log}
 }
 
