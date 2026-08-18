@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             (unknown)
-// source: urussu-be/v1/dots.proto
+// source: urussu/v1/dots.proto
 
 package urussuv1
 
@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DotsService_ListDots_FullMethodName = "/urussu_be.v1.DotsService/ListDots"
-	DotsService_GetDot_FullMethodName   = "/urussu_be.v1.DotsService/GetDot"
+	DotsService_ListDots_FullMethodName = "/urussu.v1.DotsService/ListDots"
+	DotsService_GetDot_FullMethodName   = "/urussu.v1.DotsService/GetDot"
 )
 
 // DotsServiceClient is the client API for DotsService service.
@@ -150,7 +150,7 @@ func _DotsService_GetDot_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var DotsService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "urussu_be.v1.DotsService",
+	ServiceName: "urussu.v1.DotsService",
 	HandlerType: (*DotsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -163,5 +163,5 @@ var DotsService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "urussu-be/v1/dots.proto",
+	Metadata: "urussu/v1/dots.proto",
 }

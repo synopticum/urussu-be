@@ -1,12 +1,12 @@
-// Package handler contains the gRPC service implementations.
-package handler
+// Package grpc contains the gRPC service implementations.
+package grpc
 
 import (
 	"context"
 	"errors"
 	"log/slog"
 
-	urussuv1 "urussu-be/gen/urussu-be/v1"
+	urussuv1 "urussu-be/gen/urussu/v1"
 	"urussu-be/internal/domain"
 
 	"google.golang.org/grpc/codes"

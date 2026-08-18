@@ -15,9 +15,9 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	urussuv1 "urussu-be/gen/urussu-be/v1"
+	urussuv1 "urussu-be/gen/urussu/v1"
 	"urussu-be/internal/config"
-	"urussu-be/internal/delivery/grpc/handler"
+	"urussu-be/internal/handlers/grpc"
 	"urussu-be/internal/repository/postgres"
 	"urussu-be/internal/service"
 )
@@ -65,7 +65,7 @@ func run() error {
 	gwMux := runtime.NewServeMux()
 	dotsRepo := postgres.NewDotsRepository(pool)
 	dotsService := service.NewDotsService(dotsRepo)
-	if err := urussuv1.RegisterDotsServiceHandlerServer(ctx, gwMux, handler.NewDotsHandler(dotsService, log)); err != nil {
+	if err := urussuv1.RegisterDotsServiceHandlerServer(ctx, gwMux, grpc.NewDotsHandler(dotsService, log)); err != nil {
 		return fmt.Errorf("register dots gateway: %w", err)
 	}
 	httpMux.Handle("/api/", gwMux)

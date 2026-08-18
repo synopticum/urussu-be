@@ -8,7 +8,7 @@ contracts — the API is defined once, in proto.
 
 ## Project layout
 
-- `api/urussu-be/v1/*.proto` — the API contracts (source of truth).
+- `api/urussu/v1/*.proto` — the API contracts (source of truth).
 - `buf.yaml` / `buf.gen.yaml` / `buf.lock` — Buf workspace, plugin and
   dependency configuration.
 - `gen/` — generated Go code (`*.pb.go`, `*_grpc.pb.go`, `*.pb.gw.go`).
@@ -21,7 +21,7 @@ contracts — the API is defined once, in proto.
 - `internal/domain` — core domain models.
 - `internal/service` — use-case layer between handlers and repositories.
 - `internal/repository/postgres` — PostgreSQL repositories (pgx pool).
-- `internal/delivery/grpc/handler` — gRPC service implementations.
+- `internal/handlers/grpc` — gRPC service implementations.
 - `config.toml` — runtime configuration.
 - `migrations/` — golang-migrate SQL migrations; the database schema and
   seed data are built by applying them (see `make migrate-up`).
@@ -30,10 +30,10 @@ contracts — the API is defined once, in proto.
 
 ## Adding a new API
 
-1. Describe the method in `api/urussu-be/v1/*.proto` (with a
+1. Describe the method in `api/urussu/v1/*.proto` (with a
    `google.api.http` annotation for the REST mapping).
 2. Run `make generate` — regenerates Go code and the swagger schema.
-3. Implement the handler in `internal/delivery/grpc/handler/`.
+3. Implement the handler in `internal/handlers/grpc/`.
 4. Register it in `cmd/urussu-be/main.go`
    (`RegisterXxxServiceHandlerServer` on the gateway mux).
 
