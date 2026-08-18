@@ -95,9 +95,8 @@ func run() error {
 
 func newLogger(level string) *slog.Logger {
 	var lvl slog.Level
-	if err := lvl.UnmarshalText([]byte(level)); err != nil {
-		lvl = slog.LevelInfo
-	}
+	// Cannot fail: the level is validated in config.Load.
+	_ = lvl.UnmarshalText([]byte(level))
 	return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: lvl}))
 }
 
