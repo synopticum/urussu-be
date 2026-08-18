@@ -34,7 +34,7 @@ docker-down:
 # NOTE: go tool builds migrate without build tags, so no database drivers get
 # compiled in ("unknown driver postgres"). go run -tags postgres builds the
 # same CLI with the postgres driver enabled.
-DATABASE_URL ?= postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost:$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable
+DATABASE_URL ?= postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost:$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=$(POSTGRES_SSLMODE)
 MIGRATE := go run -tags postgres github.com/golang-migrate/migrate/v4/cmd/migrate -path migrations -database "$(DATABASE_URL)"
 
 migrate-create:   # usage: make migrate-create name=create_layers

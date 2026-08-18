@@ -70,7 +70,7 @@ func Load() (Config, error) {
 func defaults() (Config, error) {
 	vars := parseDotenv(string(defaultEnv))
 
-	for _, key := range []string{"HTTP_PORT", "LOG_LEVEL", "POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB", "POSTGRES_PORT"} {
+	for _, key := range []string{"HTTP_PORT", "LOG_LEVEL", "POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB", "POSTGRES_PORT", "POSTGRES_SSLMODE"} {
 		if vars[key] == "" {
 			return Config{}, fmt.Errorf("config.env: %s is required", key)
 		}
@@ -87,8 +87,8 @@ func defaults() (Config, error) {
 	return Config{
 		HTTP: HTTP{Port: port},
 		Database: Database{
-			URL: fmt.Sprintf("postgres://%s:%s@localhost:%s/%s?sslmode=disable",
-				vars["POSTGRES_USER"], vars["POSTGRES_PASSWORD"], vars["POSTGRES_PORT"], vars["POSTGRES_DB"]),
+			URL: fmt.Sprintf("postgres://%s:%s@localhost:%s/%s?sslmode=%s",
+				vars["POSTGRES_USER"], vars["POSTGRES_PASSWORD"], vars["POSTGRES_PORT"], vars["POSTGRES_DB"], vars["POSTGRES_SSLMODE"]),
 		},
 		Log: Log{Level: vars["LOG_LEVEL"]},
 	}, nil

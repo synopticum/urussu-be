@@ -25,7 +25,7 @@ services:
         condition: service_healthy
     environment:
       # Same credentials as the db service, but the in-network db host.
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SSLMODE}
       LOG_LEVEL: ${LOG_LEVEL}
       # The app must listen on the same port we publish (see ports below).
       HTTP_PORT: ${HTTP_PORT}
