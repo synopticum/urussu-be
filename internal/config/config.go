@@ -24,7 +24,8 @@ type Config struct {
 }
 
 type HTTP struct {
-	Port int
+	Port               int
+	CORSAllowedOrigins []string
 }
 
 type Database struct {
@@ -36,7 +37,8 @@ type Log struct {
 }
 
 // Load returns the default configuration with environment variable
-// overrides applied: HTTP_PORT, DATABASE_URL, LOG_LEVEL.
+// overrides applied: HTTP_PORT, DATABASE_URL, LOG_LEVEL,
+// CORS_ALLOWED_ORIGINS.
 func Load() (Config, error) {
 	cfg, err := defaults()
 	if err != nil {
@@ -55,6 +57,9 @@ func Load() (Config, error) {
 	}
 	if v, ok := os.LookupEnv("LOG_LEVEL"); ok {
 		cfg.Log.Level = v
+	}
+	if v, ok := os.LookupEnv("CORS_ALLOWED_ORIGINS"); ok {
+		cfg.HTTP.CORSAllowedOrigins = parseOrigins(v)
 	}
 
 	if err := cfg.Validate(); err != nil {
@@ -85,7 +90,10 @@ func defaults() (Config, error) {
 	}
 
 	return Config{
-		HTTP: HTTP{Port: port},
+		HTTP: HTTP{
+			Port:               port,
+			CORSAllowedOrigins: parseOrigins(vars["CORS_ALLOWED_ORIGINS"]),
+		},
 		Database: Database{
 			URL: fmt.Sprintf("postgres://%s:%s@localhost:%s/%s?sslmode=%s",
 				vars["POSTGRES_USER"], vars["POSTGRES_PASSWORD"], vars["POSTGRES_PORT"], vars["POSTGRES_DB"], vars["POSTGRES_SSLMODE"]),
@@ -110,6 +118,17 @@ func parseDotenv(data string) map[string]string {
 		}
 	}
 	return vars
+}
+
+// parseOrigins splits a comma-separated origin list into a trimmed slice.
+func parseOrigins(s string) []string {
+	var origins []string
+	for o := range strings.SplitSeq(s, ",") {
+		if o = strings.TrimSpace(o); o != "" {
+			origins = append(origins, o)
+		}
+	}
+	return origins
 }
 
 // Validate checks that the configuration is usable, so the service fails

@@ -80,6 +80,9 @@ all. Every option can be overridden via an environment variable:
 - `HTTP_PORT` — HTTP port.
 - `DATABASE_URL` — PostgreSQL URL.
 - `LOG_LEVEL` — `debug` | `info` | `warn` | `error`.
+- `CORS_ALLOWED_ORIGINS` — comma-separated origins allowed to call the API
+  cross-origin (use when the frontend is served from a different origin);
+  empty disables CORS.
 
 The Docker image runs on defaults plus env (see `docker-compose.yml`,
 which assembles its `DATABASE_URL` from the same `POSTGRES_*` values).
@@ -146,6 +149,4 @@ docker compose logs -f db   # follow Postgres logs
 
 ## Possible improvements
 
-- Add CORS middleware on the HTTP mux if the frontend is served from a
-  different origin.
 - Add `buf breaking` to CI to protect the contracts.

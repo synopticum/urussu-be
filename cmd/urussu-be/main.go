@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/rs/cors"
 
 	urussuv1 "urussu-be/gen/urussu/v1"
 	"urussu-be/internal/config"
@@ -43,6 +44,7 @@ func run() error {
 	log.Info("config loaded",
 		slog.Int("http_port", cfg.HTTP.Port),
 		slog.String("log_level", cfg.Log.Level),
+		slog.Any("cors_allowed_origins", cfg.HTTP.CORSAllowedOrigins),
 		slog.String("database_url", postgres.RedactURL(cfg.Database.URL)))
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
@@ -70,10 +72,23 @@ func run() error {
 	httpMux.Handle("GET /swagger.json", swagger.JsonHandler())
 	httpMux.Handle("GET /swagger/", swagger.UIHandler())
 
+	// CORS is needed only when the frontend is served from a different
+	// origin; an empty origin list leaves the mux unwrapped (rs/cors would
+	// otherwise default to allowing every origin).
+	var handler http.Handler = httpMux
+	if len(cfg.HTTP.CORSAllowedOrigins) > 0 {
+		handler = cors.New(cors.Options{
+			AllowedOrigins: cfg.HTTP.CORSAllowedOrigins,
+			AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+			AllowedHeaders: []string{"Content-Type", "Authorization"},
+			MaxAge:         600,
+		}).Handler(httpMux)
+	}
+
 	httpAddr := fmt.Sprintf(":%d", cfg.HTTP.Port)
 	httpServer := &http.Server{
 		Addr:              httpAddr,
-		Handler:           httpMux,
+		Handler:           handler,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
