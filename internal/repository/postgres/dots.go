@@ -25,11 +25,11 @@ func (r *DotsRepository) GetByID(ctx context.Context, id string) (domain.Dot, er
 	var d domain.Dot
 
 	err := r.pool.QueryRow(ctx,
-		`SELECT d.id::text, d.title, d.description, l.name
+		`SELECT d.id::text, d.title, d.description, l.name, d.coordinates
 		 FROM dots d
 		 JOIN layers l ON l.id = d.layer
 		 WHERE d.id = $1`, id).
-		Scan(&d.ID, &d.Title, &d.ShortDescription, &d.Layer)
+		Scan(&d.ID, &d.Title, &d.ShortDescription, &d.Layer, &d.Coordinates)
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		return domain.Dot{}, domain.ErrNotFound
@@ -44,7 +44,7 @@ func (r *DotsRepository) GetByID(ctx context.Context, id string) (domain.Dot, er
 
 func (r *DotsRepository) List(ctx context.Context, limit int32, layer string) ([]domain.Dot, error) {
 	rows, err := r.pool.Query(ctx,
-		`SELECT d.id::text, d.title, d.description, l.name
+		`SELECT d.id::text, d.title, d.description, l.name, d.coordinates
 		 FROM dots d
 		 JOIN layers l ON l.id = d.layer
 		 WHERE ($2::text = '' OR l.name = $2)
@@ -57,7 +57,7 @@ func (r *DotsRepository) List(ctx context.Context, limit int32, layer string) ([
 	var dots []domain.Dot
 	for rows.Next() {
 		var d domain.Dot
-		if err := rows.Scan(&d.ID, &d.Title, &d.ShortDescription, &d.Layer); err != nil {
+		if err := rows.Scan(&d.ID, &d.Title, &d.ShortDescription, &d.Layer, &d.Coordinates); err != nil {
 			return nil, fmt.Errorf("scan dot: %w", err)
 		}
 		dots = append(dots, d)

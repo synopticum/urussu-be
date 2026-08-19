@@ -12,4 +12,5 @@ type Dot struct {
 	Title            string
 	ShortDescription string
 	Layer            string
+	Coordinates      []float64
 }

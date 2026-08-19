@@ -208,6 +208,14 @@
         },
         "layer": {
           "type": "string"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          },
+          "description": "Position on the map as [latitude, longitude]."
         }
       }
     },

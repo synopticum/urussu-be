@@ -216,8 +216,10 @@ type Dot struct {
 	Title            string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	ShortDescription string                 `protobuf:"bytes,3,opt,name=short_description,json=shortDescription,proto3" json:"short_description,omitempty"`
 	Layer            string                 `protobuf:"bytes,4,opt,name=layer,proto3" json:"layer,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// Position on the map as [latitude, longitude].
+	Coordinates   []float64 `protobuf:"fixed64,5,rep,packed,name=coordinates,proto3" json:"coordinates,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Dot) Reset() {
@@ -278,6 +280,13 @@ func (x *Dot) GetLayer() string {
 	return ""
 }
 
+func (x *Dot) GetCoordinates() []float64 {
+	if x != nil {
+		return x.Coordinates
+	}
+	return nil
+}
+
 var File_urussu_v1_dots_proto protoreflect.FileDescriptor
 
 const file_urussu_v1_dots_proto_rawDesc = "" +
@@ -292,12 +301,13 @@ const file_urussu_v1_dots_proto_rawDesc = "" +
 	"\rGetDotRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"2\n" +
 	"\x0eGetDotResponse\x12 \n" +
-	"\x03dot\x18\x01 \x01(\v2\x0e.urussu.v1.DotR\x03dot\"n\n" +
+	"\x03dot\x18\x01 \x01(\v2\x0e.urussu.v1.DotR\x03dot\"\x90\x01\n" +
 	"\x03Dot\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12+\n" +
 	"\x11short_description\x18\x03 \x01(\tR\x10shortDescription\x12\x14\n" +
-	"\x05layer\x18\x04 \x01(\tR\x05layer2\xc2\x01\n" +
+	"\x05layer\x18\x04 \x01(\tR\x05layer\x12 \n" +
+	"\vcoordinates\x18\x05 \x03(\x01R\vcoordinates2\xc2\x01\n" +
 	"\vDotsService\x12Y\n" +
 	"\bListDots\x12\x1a.urussu.v1.ListDotsRequest\x1a\x1b.urussu.v1.ListDotsResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/api/v1/dots\x12X\n" +
 	"\x06GetDot\x12\x18.urussu.v1.GetDotRequest\x1a\x19.urussu.v1.GetDotResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/api/v1/dots/{id}B\xc2\x01\x92A\x9c\x01\x12\x16\n" +
