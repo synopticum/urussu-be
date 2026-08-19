@@ -20,8 +20,9 @@ objects and paths) over HTTP/JSON. The defining architectural traits:
   frontend.
 - **There is no standalone gRPC listener.** grpc-gateway handlers call the
   service implementations in-process; only one HTTP server runs (default
-  port 8080), serving `/api/*` (REST) and `/swagger.json` (the generated
-  OpenAPI schema, embedded into the binary via `go:embed`).
+  port 8080), serving `/api/*` (REST), `/swagger.json` (the generated
+  OpenAPI schema, embedded into the binary via `go:embed`) and `/swagger/`
+  (an embedded Swagger UI rendering that schema).
 
 ## Technology stack
 

@@ -17,6 +17,8 @@ architecture decisions, code conventions and gotchas.
 - `gen/` — generated Go code (`*.pb.go`, `*_grpc.pb.go`, `*.pb.gw.go`).
 - `gen/openapiv2/` — generated OpenAPI (swagger 2.0) schema, embedded into
   the binary (`embed.go`) and served as `/swagger.json`.
+- `internal/handlers/swagger` — serves `/swagger.json` and an embedded
+  Swagger UI at `/swagger/` (assets vendored under `ui/`).
 - `pkg/third_party/` — vendored proto imports (googleapis, grpc-gateway
   options) so IDEs can resolve them; refreshed by `make generate`.
 - `cmd/urussu-be/main.go` — entry point: wiring, HTTP server, graceful shutdown.
@@ -66,6 +68,7 @@ go run ./cmd/urussu-be    # run the app on the host
 ### Endpoints
 
 - `GET http://localhost:8080/swagger.json` — generated OpenAPI schema.
+- `GET http://localhost:8080/swagger/` — Swagger UI rendering that schema.
 
 ## Configuration
 
@@ -145,6 +148,4 @@ docker compose logs -f db   # follow Postgres logs
 
 - Add CORS middleware on the HTTP mux if the frontend is served from a
   different origin.
-- Serve a swagger UI (e.g. swagger-ui embedded via `go:embed`) next to the
-  raw `/swagger.json`.
 - Add `buf breaking` to CI to protect the contracts.
