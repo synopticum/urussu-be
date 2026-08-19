@@ -76,6 +76,12 @@ func run() error {
 		return fmt.Errorf("register objects gateway: %w", err)
 	}
 
+	pathsRepo := postgres.NewPathsRepository(pool)
+	pathsService := service.NewPathsService(pathsRepo)
+	if err := urussuv1.RegisterPathsServiceHandlerServer(ctx, gwMux, grpc.NewPathsHandler(pathsService, log)); err != nil {
+		return fmt.Errorf("register paths gateway: %w", err)
+	}
+
 	// Auth
 	usersRepo := postgres.NewUsersRepository(pool)
 	authService := service.NewAuthService(usersRepo, cfg.JWT.Secret, cfg.JWT.TokenTTL)

@@ -16,6 +16,10 @@
     {
       "name": "ObjectsService",
       "description": "ObjectsService serves map \"object\" objects stored in PostgreSQL."
+    },
+    {
+      "name": "PathsService",
+      "description": "PathsService serves map \"path\" objects stored in PostgreSQL."
     }
   ],
   "schemes": [
@@ -232,6 +236,71 @@
           "ObjectsService"
         ]
       }
+    },
+    "/api/v1/paths": {
+      "get": {
+        "summary": "ListPaths returns paths from the database.",
+        "operationId": "PathsService_ListPaths",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListPathsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "description": "Maximum number of paths to return. Defaults to 1000 when omitted.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "PathsService"
+        ]
+      }
+    },
+    "/api/v1/paths/{id}": {
+      "get": {
+        "summary": "GetPath returns a single path by its ID.",
+        "operationId": "PathsService_GetPath",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetPathResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the path to return.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "PathsService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -303,6 +372,14 @@
         }
       }
     },
+    "v1GetPathResponse": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/definitions/v1Path"
+        }
+      }
+    },
     "v1ListDotsResponse": {
       "type": "object",
       "properties": {
@@ -323,6 +400,18 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/v1Object"
+          }
+        }
+      }
+    },
+    "v1ListPathsResponse": {
+      "type": "object",
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Path"
           }
         }
       }
@@ -378,6 +467,28 @@
             "$ref": "#/definitions/v1Point"
           },
           "description": "Polygon outline of the object on the map."
+        }
+      }
+    },
+    "v1Path": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Point"
+          },
+          "description": "Polyline of the path on the map."
         }
       }
     },

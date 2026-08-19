@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package urussu.v1;
+
+import "google/api/annotations.proto";
+import "urussu/v1/objects.proto";
+
+option go_package = "urussu-be/gen/urussu/v1;urussuv1";
+
+// PathsService serves map "path" objects stored in PostgreSQL.
+service PathsService {
+  // ListPaths returns paths from the database.
+  rpc ListPaths(ListPathsRequest) returns (ListPathsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/paths"
+    };
+  }
+
+  // GetPath returns a single path by its ID.
+  rpc GetPath(GetPathRequest) returns (GetPathResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/paths/{id}"
+    };
+  }
+}
+
+message ListPathsRequest {
+  // Maximum number of paths to return. Defaults to 1000 when omitted.
+  int32 limit = 1;
+}
+
+message ListPathsResponse {
+  repeated Path paths = 1;
+}
+
+message GetPathRequest {
+  // ID of the path to return.
+  string id = 1;
+}
+
+message GetPathResponse {
+  Path path = 1;
+}
+
+message Path {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  // Polyline of the path on the map.
+  repeated Point coordinates = 4;
+}
