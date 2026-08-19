@@ -88,6 +88,8 @@ all. Every option can be overridden via an environment variable:
   repo), so the app refuses to start without it. It must be at least 32
   bytes (HS256 needs a 256-bit key). For local development export any
   throwaway value, e.g. `JWT_SECRET=dev-secret-change-me-dev-secret-change-me`.
+- `JWT_TOKEN_TTL` — how long a login token stays valid (Go duration, e.g.
+  `30m`, `1h`, `24h`); defaults to `1h`.
 
 With a secret set, all endpoints except `POST /api/v1/auth/register` and
 `POST /api/v1/auth/login` require `Authorization: Bearer <token>`; login

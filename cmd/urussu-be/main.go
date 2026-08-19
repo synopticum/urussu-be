@@ -72,7 +72,7 @@ func run() error {
 
 	// Auth
 	usersRepo := postgres.NewUsersRepository(pool)
-	authService := service.NewAuthService(usersRepo, cfg.JWT.Secret)
+	authService := service.NewAuthService(usersRepo, cfg.JWT.Secret, cfg.JWT.TokenTTL)
 	if err := urussuv1.RegisterAuthServiceHandlerServer(ctx, gwMux, grpc.NewAuthHandler(authService, log)); err != nil {
 		return fmt.Errorf("register auth gateway: %w", err)
 	}

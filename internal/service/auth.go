@@ -13,10 +13,6 @@ import (
 	"urussu-be/internal/domain"
 )
 
-// tokenTTL is how long a login token stays valid. Kept as a constant to
-// keep the config surface minimal.
-const tokenTTL = time.Hour
-
 // dummyPasswordHash is a valid bcrypt hash (cost bcrypt.DefaultCost) of a
 // throwaway password. Login compares against it when the email is unknown so
 // that case takes as long as a real password check.
@@ -31,12 +27,13 @@ type UsersRepository interface {
 
 // AuthService implements the registration and login use-cases.
 type AuthService struct {
-	repo   UsersRepository
-	secret string
+	repo     UsersRepository
+	secret   string
+	tokenTTL time.Duration
 }
 
-func NewAuthService(repo UsersRepository, secret string) *AuthService {
-	return &AuthService{repo: repo, secret: secret}
+func NewAuthService(repo UsersRepository, secret string, tokenTTL time.Duration) *AuthService {
+	return &AuthService{repo: repo, secret: secret, tokenTTL: tokenTTL}
 }
 
 func (s *AuthService) Register(ctx context.Context, email, password, firstName, lastName string) (domain.User, error) {
@@ -74,7 +71,7 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (string
 		return "", domain.ErrInvalidCredentials
 	}
 
-	return auth.Generate(s.secret, user.ID, string(user.Role), tokenTTL)
+	return auth.Generate(s.secret, user.ID, string(user.Role), s.tokenTTL)
 }
 
 // normalizeEmail lowercases and trims the address because the UNIQUE

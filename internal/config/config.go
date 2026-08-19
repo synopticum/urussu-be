@@ -11,6 +11,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 //go:embed config.env
@@ -41,11 +42,13 @@ type JWT struct {
 	// Secret signs HS256 tokens. It comes from the JWT_SECRET environment
 	// variable only — never from config.env, so it cannot end up in the repo.
 	Secret string
+	// TokenTTL is how long a login token stays valid.
+	TokenTTL time.Duration
 }
 
 // Load returns the default configuration with environment variable
 // overrides applied: HTTP_PORT, DATABASE_URL, LOG_LEVEL,
-// CORS_ALLOWED_ORIGINS, JWT_SECRET.
+// CORS_ALLOWED_ORIGINS, JWT_SECRET, JWT_TOKEN_TTL.
 func Load() (Config, error) {
 	cfg, err := defaults()
 	if err != nil {
@@ -71,6 +74,13 @@ func Load() (Config, error) {
 	if v, ok := os.LookupEnv("JWT_SECRET"); ok {
 		cfg.JWT.Secret = v
 	}
+	if v, ok := os.LookupEnv("JWT_TOKEN_TTL"); ok {
+		ttl, err := time.ParseDuration(v)
+		if err != nil {
+			return Config{}, fmt.Errorf("invalid JWT_TOKEN_TTL %q: %w", v, err)
+		}
+		cfg.JWT.TokenTTL = ttl
+	}
 
 	if err := cfg.Validate(); err != nil {
 		return Config{}, err
@@ -85,7 +95,7 @@ func Load() (Config, error) {
 func defaults() (Config, error) {
 	vars := parseDotenv(string(defaultEnv))
 
-	for _, key := range []string{"HTTP_PORT", "LOG_LEVEL", "POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB", "POSTGRES_PORT", "POSTGRES_SSLMODE"} {
+	for _, key := range []string{"HTTP_PORT", "LOG_LEVEL", "POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB", "POSTGRES_PORT", "POSTGRES_SSLMODE", "JWT_TOKEN_TTL"} {
 		if vars[key] == "" {
 			return Config{}, fmt.Errorf("config.env: %s is required", key)
 		}
@@ -98,6 +108,10 @@ func defaults() (Config, error) {
 	if _, err := strconv.Atoi(vars["POSTGRES_PORT"]); err != nil {
 		return Config{}, fmt.Errorf("config.env: invalid POSTGRES_PORT %q: %w", vars["POSTGRES_PORT"], err)
 	}
+	tokenTTL, err := time.ParseDuration(vars["JWT_TOKEN_TTL"])
+	if err != nil {
+		return Config{}, fmt.Errorf("config.env: invalid JWT_TOKEN_TTL %q: %w", vars["JWT_TOKEN_TTL"], err)
+	}
 
 	return Config{
 		HTTP: HTTP{
@@ -109,6 +123,7 @@ func defaults() (Config, error) {
 				vars["POSTGRES_USER"], vars["POSTGRES_PASSWORD"], vars["POSTGRES_PORT"], vars["POSTGRES_DB"], vars["POSTGRES_SSLMODE"]),
 		},
 		Log: Log{Level: vars["LOG_LEVEL"]},
+		JWT: JWT{TokenTTL: tokenTTL},
 	}, nil
 }
 
@@ -157,6 +172,9 @@ func (c Config) Validate() error {
 	// brute-forceable.
 	if len(c.JWT.Secret) < 32 {
 		return fmt.Errorf("JWT_SECRET must be at least 32 bytes, got %d", len(c.JWT.Secret))
+	}
+	if c.JWT.TokenTTL <= 0 {
+		return fmt.Errorf("JWT_TOKEN_TTL must be positive, got %s", c.JWT.TokenTTL)
 	}
 	var lvl slog.Level
 	if err := lvl.UnmarshalText([]byte(c.Log.Level)); err != nil {
