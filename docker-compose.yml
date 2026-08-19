@@ -29,6 +29,10 @@ services:
       LOG_LEVEL: ${LOG_LEVEL}
       # The app must listen on the same port we publish (see ports below).
       HTTP_PORT: ${HTTP_PORT}
+      # JWT secret is env-only by design: compose is run with
+      # `--env-file internal/config/config.env`, so ${JWT_SECRET} must be
+      # exported in the shell that runs compose (it is not in config.env).
+      JWT_SECRET: ${JWT_SECRET}
     ports:
       - "${HTTP_PORT}:${HTTP_PORT}"   # HTTP (REST + swagger.json)
 

@@ -1,0 +1,325 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "urussu-be API",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "DotsService",
+      "description": "DotsService serves map \"dot\" objects stored in PostgreSQL."
+    },
+    {
+      "name": "AuthService",
+      "description": "AuthService handles registration and login. Its endpoints are public —\nthe HTTP auth middleware skips everything under /api/v1/auth/."
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "Login authenticates a user and returns a signed JWT bearer token.",
+        "operationId": "AuthService_Login",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1LoginResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "LoginRequest carries the credentials to authenticate with.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1LoginRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthService"
+        ]
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "summary": "Register creates a new user account with the \"user\" role.",
+        "operationId": "AuthService_Register",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RegisterResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "RegisterRequest carries the data needed to create an account.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RegisterRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AuthService"
+        ]
+      }
+    },
+    "/api/v1/dots": {
+      "get": {
+        "summary": "ListDots returns dots from the database.",
+        "operationId": "DotsService_ListDots",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListDotsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "description": "Maximum number of dots to return. Defaults to 1000 when omitted.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "layer",
+            "description": "Filter by layer name (e.g. \"1980\"). Returns dots from all layers when omitted.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DotsService"
+        ]
+      }
+    },
+    "/api/v1/dots/{id}": {
+      "get": {
+        "summary": "GetDot returns a single dot by its ID.",
+        "operationId": "DotsService_GetDot",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetDotResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the dot to return.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DotsService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Dot": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "shortDescription": {
+          "type": "string"
+        },
+        "layer": {
+          "type": "string"
+        }
+      }
+    },
+    "v1GetDotResponse": {
+      "type": "object",
+      "properties": {
+        "dot": {
+          "$ref": "#/definitions/v1Dot"
+        }
+      }
+    },
+    "v1ListDotsResponse": {
+      "type": "object",
+      "properties": {
+        "dots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Dot"
+          }
+        }
+      }
+    },
+    "v1LoginRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Email address of the account."
+        },
+        "password": {
+          "type": "string",
+          "description": "Plain-text password to verify against the stored bcrypt hash."
+        }
+      },
+      "description": "LoginRequest carries the credentials to authenticate with."
+    },
+    "v1LoginResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "Signed JWT with sub/role/iat/exp claims."
+        }
+      },
+      "description": "LoginResponse returns the token to send as \"Authorization: Bearer \u003ctoken\u003e\"."
+    },
+    "v1RegisterRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Email address of the new account (case-insensitive, stored lowercased)."
+        },
+        "password": {
+          "type": "string",
+          "description": "Plain-text password, stored only as a bcrypt hash. Minimum 8 characters."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Given name of the user."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Family name of the user."
+        }
+      },
+      "description": "RegisterRequest carries the data needed to create an account."
+    },
+    "v1RegisterResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/v1User",
+          "description": "The created user."
+        }
+      },
+      "description": "RegisterResponse returns the created account. The password hash is never exposed."
+    },
+    "v1User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique ID of the user (UUID)."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user."
+        },
+        "role": {
+          "type": "string",
+          "description": "Access level of the user (\"user\" or \"admin\")."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Given name of the user."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Family name of the user."
+        }
+      },
+      "description": "User is the public view of an account — no password hash."
+    }
+  },
+  "securityDefinitions": {
+    "bearer": {
+      "type": "apiKey",
+      "description": "JWT as \"Bearer \u003ctoken\u003e\", obtained from /api/v1/auth/login.",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

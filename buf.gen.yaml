@@ -12,3 +12,5 @@ plugins:
     opt: paths=source_relative
   - local: [go, tool, protoc-gen-openapiv2]
     out: gen/openapiv2
+    # Merge all services into a single schema — /swagger.json embeds one file.
+    opt: allow_merge=true,merge_file_name=swagger

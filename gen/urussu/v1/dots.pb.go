@@ -300,8 +300,10 @@ const file_urussu_v1_dots_proto_rawDesc = "" +
 	"\x05layer\x18\x04 \x01(\tR\x05layer2\xc2\x01\n" +
 	"\vDotsService\x12Y\n" +
 	"\bListDots\x12\x1a.urussu.v1.ListDotsRequest\x1a\x1b.urussu.v1.ListDotsResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/api/v1/dots\x12X\n" +
-	"\x06GetDot\x12\x18.urussu.v1.GetDotRequest\x1a\x19.urussu.v1.GetDotResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/api/v1/dots/{id}Bd\x92A?\x12\x16\n" +
-	"\rurussu-be API2\x051.0.0*\x01\x012\x10application/json:\x10application/jsonZ urussu-be/gen/urussu/v1;urussuv1b\x06proto3"
+	"\x06GetDot\x12\x18.urussu.v1.GetDotRequest\x1a\x19.urussu.v1.GetDotResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/api/v1/dots/{id}B\xc2\x01\x92A\x9c\x01\x12\x16\n" +
+	"\rurussu-be API2\x051.0.0*\x01\x012\x10application/json:\x10application/jsonZ[\n" +
+	"Y\n" +
+	"\x06bearer\x12O\b\x02\x12:JWT as \"Bearer <token>\", obtained from /api/v1/auth/login.\x1a\rAuthorization \x02Z urussu-be/gen/urussu/v1;urussuv1b\x06proto3"
 
 var (
 	file_urussu_v1_dots_proto_rawDescOnce sync.Once

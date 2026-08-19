@@ -104,6 +104,9 @@ the binary (`go:embed`), the Makefile (`include`) and docker compose
 - The DB host is deliberately not in `config.env`: `localhost` for local
   runs (URL assembled from `POSTGRES_*` parts), `db` for the compose `app`
   service.
+- `JWT_SECRET` is env-only by design (required, no default in `config.env`)
+  so the HMAC secret can never be committed; compose gets it from the shell
+  environment, not from the `--env-file`.
 - Config is validated at startup (fail fast) — keep it that way.
 
 ## Code style guidelines

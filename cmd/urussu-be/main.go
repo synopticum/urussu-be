@@ -15,6 +15,7 @@ import (
 	"github.com/rs/cors"
 
 	urussuv1 "urussu-be/gen/urussu/v1"
+	"urussu-be/internal/auth"
 	"urussu-be/internal/config"
 	"urussu-be/internal/handlers/grpc"
 	"urussu-be/internal/handlers/swagger"
@@ -60,15 +61,28 @@ func run() error {
 	// HTTP server: grpc-gateway handlers run in-process (no gRPC listener),
 	// plus the generated OpenAPI schema.
 	httpMux := http.NewServeMux()
-
 	gwMux := runtime.NewServeMux()
+
+	// Services
 	dotsRepo := postgres.NewDotsRepository(pool)
 	dotsService := service.NewDotsService(dotsRepo)
 	if err := urussuv1.RegisterDotsServiceHandlerServer(ctx, gwMux, grpc.NewDotsHandler(dotsService, log)); err != nil {
 		return fmt.Errorf("register dots gateway: %w", err)
 	}
-	httpMux.Handle("/api/", gwMux)
 
+	// Auth
+	usersRepo := postgres.NewUsersRepository(pool)
+	authService := service.NewAuthService(usersRepo, cfg.JWT.Secret)
+	if err := urussuv1.RegisterAuthServiceHandlerServer(ctx, gwMux, grpc.NewAuthHandler(authService, log)); err != nil {
+		return fmt.Errorf("register auth gateway: %w", err)
+	}
+	// The auth endpoints must stay reachable without a token; everything
+	// else under /api/ goes through JWT authentication. The secret itself
+	// is never logged.
+	log.Info("JWT authentication enabled", slog.String("public_prefix", "/api/v1/auth/"))
+	httpMux.Handle("/api/", auth.Middleware(cfg.JWT.Secret, log, "/api/v1/auth/")(gwMux))
+
+	// Swagger
 	httpMux.Handle("GET /swagger.json", swagger.JsonHandler())
 	httpMux.Handle("GET /swagger/", swagger.UIHandler())
 

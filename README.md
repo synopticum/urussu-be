@@ -83,9 +83,21 @@ all. Every option can be overridden via an environment variable:
 - `CORS_ALLOWED_ORIGINS` — comma-separated origins allowed to call the API
   cross-origin (use when the frontend is served from a different origin);
   empty disables CORS.
+- `JWT_SECRET` — HMAC secret signing the JWT access tokens. **Required and
+  env-only**: it has no default in `config.env` (secrets never live in the
+  repo), so the app refuses to start without it. For local development
+  export any throwaway value, e.g. `JWT_SECRET=dev-secret-change-me`.
+
+With a secret set, all endpoints except `POST /api/v1/auth/register` and
+`POST /api/v1/auth/login` require `Authorization: Bearer <token>`; login
+returns a JWT with `sub` (user id), `role`, `iat` and `exp` claims.
 
 The Docker image runs on defaults plus env (see `docker-compose.yml`,
 which assembles its `DATABASE_URL` from the same `POSTGRES_*` values).
+Note that compose is run with `--env-file internal/config/config.env`,
+which replaces the default `.env` for variable interpolation — so
+`JWT_SECRET` must come from the shell environment, e.g.
+`JWT_SECRET=dev-secret-change-me make docker-up`.
 
 ## IDE setup (GoLand / IntelliJ)
 

@@ -10,9 +10,9 @@ CREATE TABLE users (
 INSERT INTO users (id, role, email, password, first_name, last_name)
 VALUES (
     '9f27aa45-efd3-40e7-bba1-72cc9004de5f',
-    'nswsergey@yandex.ru',
-    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
     'user',
+    'nswsergey@yandex.ru',
+    '$2a$10$A6u6pPtUBGBtH5F2Ep7GSesAhiGsPM/tT4lKUCup8kL6c24tdjiFq', -- bcrypt of "password"
     'Сергей',
     'Новиков'
 );

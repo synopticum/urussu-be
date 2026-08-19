@@ -21,6 +21,7 @@ type Config struct {
 	HTTP     HTTP
 	Database Database
 	Log      Log
+	JWT      JWT
 }
 
 type HTTP struct {
@@ -36,9 +37,15 @@ type Log struct {
 	Level string
 }
 
+type JWT struct {
+	// Secret signs HS256 tokens. It comes from the JWT_SECRET environment
+	// variable only — never from config.env, so it cannot end up in the repo.
+	Secret string
+}
+
 // Load returns the default configuration with environment variable
 // overrides applied: HTTP_PORT, DATABASE_URL, LOG_LEVEL,
-// CORS_ALLOWED_ORIGINS.
+// CORS_ALLOWED_ORIGINS, JWT_SECRET.
 func Load() (Config, error) {
 	cfg, err := defaults()
 	if err != nil {
@@ -60,6 +67,9 @@ func Load() (Config, error) {
 	}
 	if v, ok := os.LookupEnv("CORS_ALLOWED_ORIGINS"); ok {
 		cfg.HTTP.CORSAllowedOrigins = parseOrigins(v)
+	}
+	if v, ok := os.LookupEnv("JWT_SECRET"); ok {
+		cfg.JWT.Secret = v
 	}
 
 	if err := cfg.Validate(); err != nil {
@@ -139,6 +149,9 @@ func (c Config) Validate() error {
 	}
 	if c.Database.URL == "" {
 		return errors.New("database url must not be empty")
+	}
+	if c.JWT.Secret == "" {
+		return errors.New("JWT_SECRET must not be empty")
 	}
 	var lvl slog.Level
 	if err := lvl.UnmarshalText([]byte(c.Log.Level)); err != nil {

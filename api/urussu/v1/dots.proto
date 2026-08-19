@@ -15,6 +15,19 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   schemes: HTTP;
   consumes: "application/json";
   produces: "application/json";
+  // Everything except /api/v1/auth/* requires a JWT bearer token; this
+  // definition lets Swagger UI send the Authorization header.
+  security_definitions: {
+    security: {
+      key: "bearer";
+      value: {
+        type: TYPE_API_KEY;
+        name: "Authorization";
+        in: IN_HEADER;
+        description: "JWT as \"Bearer <token>\", obtained from /api/v1/auth/login.";
+      };
+    };
+  };
 };
 
 // DotsService serves map "dot" objects stored in PostgreSQL.

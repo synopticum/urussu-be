@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package urussu.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "urussu-be/gen/urussu/v1;urussuv1";
+
+// AuthService handles registration and login. Its endpoints are public —
+// the HTTP auth middleware skips everything under /api/v1/auth/.
+service AuthService {
+  // Register creates a new user account with the "user" role.
+  rpc Register(RegisterRequest) returns (RegisterResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/auth/register"
+      body: "*"
+    };
+  }
+
+  // Login authenticates a user and returns a signed JWT bearer token.
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/auth/login"
+      body: "*"
+    };
+  }
+}
+
+// RegisterRequest carries the data needed to create an account.
+message RegisterRequest {
+  // Email address of the new account (case-insensitive, stored lowercased).
+  string email = 1;
+  // Plain-text password, stored only as a bcrypt hash. Minimum 8 characters.
+  string password = 2;
+  // Given name of the user.
+  string first_name = 3;
+  // Family name of the user.
+  string last_name = 4;
+}
+
+// RegisterResponse returns the created account. The password hash is never exposed.
+message RegisterResponse {
+  // The created user.
+  User user = 1;
+}
+
+// LoginRequest carries the credentials to authenticate with.
+message LoginRequest {
+  // Email address of the account.
+  string email = 1;
+  // Plain-text password to verify against the stored bcrypt hash.
+  string password = 2;
+}
+
+// LoginResponse returns the token to send as "Authorization: Bearer <token>".
+message LoginResponse {
+  // Signed JWT with sub/role/iat/exp claims.
+  string token = 1;
+}
+
+// User is the public view of an account — no password hash.
+message User {
+  // Unique ID of the user (UUID).
+  string id = 1;
+  // Email address of the user.
+  string email = 2;
+  // Access level of the user ("user" or "admin").
+  string role = 3;
+  // Given name of the user.
+  string first_name = 4;
+  // Family name of the user.
+  string last_name = 5;
+}
