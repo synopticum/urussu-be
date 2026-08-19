@@ -17,6 +17,11 @@ import (
 // keep the config surface minimal.
 const tokenTTL = time.Hour
 
+// dummyPasswordHash is a valid bcrypt hash (cost bcrypt.DefaultCost) of a
+// throwaway password. Login compares against it when the email is unknown so
+// that case takes as long as a real password check.
+var dummyPasswordHash = []byte("$2a$10$ZIwih.KgAX6Aa9jIl.Lvg.bv4zYXYYHmgW85OSuniE4MJnSG3b1G.")
+
 // UsersRepository is the storage contract required by AuthService.
 // Defined on the consumer side so the service can be tested with a stub.
 type UsersRepository interface {
@@ -55,7 +60,10 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (string
 	user, err := s.repo.GetByEmail(ctx, normalizeEmail(email))
 	if errors.Is(err, domain.ErrNotFound) {
 		// Unknown email and wrong password must look identical, otherwise a
-		// caller could enumerate registered emails.
+		// caller could enumerate registered emails. Run bcrypt anyway so the
+		// response time is the same in both cases: skipping the comparison
+		// would leak registered emails through a timing side channel.
+		_ = bcrypt.CompareHashAndPassword(dummyPasswordHash, []byte(password))
 		return "", domain.ErrInvalidCredentials
 	}
 	if err != nil {
