@@ -216,10 +216,9 @@ type Dot struct {
 	Title            string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	ShortDescription string                 `protobuf:"bytes,3,opt,name=short_description,json=shortDescription,proto3" json:"short_description,omitempty"`
 	Layer            string                 `protobuf:"bytes,4,opt,name=layer,proto3" json:"layer,omitempty"`
-	// Position on the map as [latitude, longitude].
-	Coordinates   []float64 `protobuf:"fixed64,5,rep,packed,name=coordinates,proto3" json:"coordinates,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Coordinates      []float64              `protobuf:"fixed64,5,rep,packed,name=coordinates,proto3" json:"coordinates,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *Dot) Reset() {

@@ -12,6 +12,10 @@
     {
       "name": "AuthService",
       "description": "AuthService handles registration and login. Its endpoints are public —\nthe HTTP auth middleware skips everything under /api/v1/auth/."
+    },
+    {
+      "name": "ObjectsService",
+      "description": "ObjectsService serves map \"object\" objects stored in PostgreSQL."
     }
   ],
   "schemes": [
@@ -163,6 +167,71 @@
           "DotsService"
         ]
       }
+    },
+    "/api/v1/objects": {
+      "get": {
+        "summary": "ListObjects returns objects from the database.",
+        "operationId": "ObjectsService_ListObjects",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListObjectsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "description": "Maximum number of objects to return. Defaults to 1000 when omitted.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "ObjectsService"
+        ]
+      }
+    },
+    "/api/v1/objects/{id}": {
+      "get": {
+        "summary": "GetObject returns a single object by its ID.",
+        "operationId": "ObjectsService_GetObject",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetObjectResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the object to return.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ObjectsService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -214,8 +283,7 @@
           "items": {
             "type": "number",
             "format": "double"
-          },
-          "description": "Position on the map as [latitude, longitude]."
+          }
         }
       }
     },
@@ -227,6 +295,14 @@
         }
       }
     },
+    "v1GetObjectResponse": {
+      "type": "object",
+      "properties": {
+        "object": {
+          "$ref": "#/definitions/v1Object"
+        }
+      }
+    },
     "v1ListDotsResponse": {
       "type": "object",
       "properties": {
@@ -235,6 +311,18 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/v1Dot"
+          }
+        }
+      }
+    },
+    "v1ListObjectsResponse": {
+      "type": "object",
+      "properties": {
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Object"
           }
         }
       }
@@ -262,6 +350,50 @@
         }
       },
       "description": "LoginResponse returns the token to send as \"Authorization: Bearer \u003ctoken\u003e\"."
+    },
+    "v1Object": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "house": {
+          "type": "string"
+        },
+        "street": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "radius": {
+          "type": "number",
+          "format": "float",
+          "description": "Radius of the object, when set."
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Point"
+          },
+          "description": "Polygon outline of the object on the map."
+        }
+      }
+    },
+    "v1Point": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "description": "Point is a position on the map."
     },
     "v1RegisterRequest": {
       "type": "object",

@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package urussu.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "urussu-be/gen/urussu/v1;urussuv1";
+
+// ObjectsService serves map "object" objects stored in PostgreSQL.
+service ObjectsService {
+  // ListObjects returns objects from the database.
+  rpc ListObjects(ListObjectsRequest) returns (ListObjectsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/objects"
+    };
+  }
+
+  // GetObject returns a single object by its ID.
+  rpc GetObject(GetObjectRequest) returns (GetObjectResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/objects/{id}"
+    };
+  }
+}
+
+message ListObjectsRequest {
+  // Maximum number of objects to return. Defaults to 1000 when omitted.
+  int32 limit = 1;
+}
+
+message ListObjectsResponse {
+  repeated Object objects = 1;
+}
+
+message GetObjectRequest {
+  // ID of the object to return.
+  string id = 1;
+}
+
+message GetObjectResponse {
+  Object object = 1;
+}
+
+message Object {
+  string id = 1;
+  string house = 2;
+  string street = 3;
+  string description = 4;
+  // Radius of the object, when set.
+  optional float radius = 5;
+  // Polygon outline of the object on the map.
+  repeated Point coordinates = 6;
+}
+
+// Point is a position on the map.
+message Point {
+  double latitude = 1;
+  double longitude = 2;
+}

@@ -70,6 +70,12 @@ func run() error {
 		return fmt.Errorf("register dots gateway: %w", err)
 	}
 
+	objectsRepo := postgres.NewObjectsRepository(pool)
+	objectsService := service.NewObjectsService(objectsRepo)
+	if err := urussuv1.RegisterObjectsServiceHandlerServer(ctx, gwMux, grpc.NewObjectsHandler(objectsService, log)); err != nil {
+		return fmt.Errorf("register objects gateway: %w", err)
+	}
+
 	// Auth
 	usersRepo := postgres.NewUsersRepository(pool)
 	authService := service.NewAuthService(usersRepo, cfg.JWT.Secret, cfg.JWT.TokenTTL)
