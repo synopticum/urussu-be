@@ -153,6 +153,11 @@ func (c Config) Validate() error {
 	if c.JWT.Secret == "" {
 		return errors.New("JWT_SECRET must not be empty")
 	}
+	// HS256 needs a key of at least 256 bits; shorter secrets are
+	// brute-forceable.
+	if len(c.JWT.Secret) < 32 {
+		return fmt.Errorf("JWT_SECRET must be at least 32 bytes, got %d", len(c.JWT.Secret))
+	}
 	var lvl slog.Level
 	if err := lvl.UnmarshalText([]byte(c.Log.Level)); err != nil {
 		return fmt.Errorf("invalid log level %q: %w", c.Log.Level, err)
