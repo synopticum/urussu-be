@@ -6,6 +6,9 @@ in-process — there is no standalone gRPC listener). The OpenAPI
 (swagger) schema consumed by the frontend is generated from the same
 contracts — the API is defined once, in proto.
 
+Working on the repo with an AI coding agent? See [AGENTS.md](AGENTS.md) for
+architecture decisions, code conventions and gotchas.
+
 ## Project layout
 
 - `api/urussu/v1/*.proto` — the API contracts (source of truth).
@@ -30,15 +33,10 @@ contracts — the API is defined once, in proto.
 
 ## Adding a new API
 
-1. Describe the method in `api/urussu/v1/*.proto` (with a
-   `google.api.http` annotation for the REST mapping).
-2. Run `make generate` — regenerates Go code and the swagger schema.
-3. Implement the handler in `internal/handlers/grpc/`.
-4. Register it in `cmd/urussu-be/main.go`
-   (`RegisterXxxServiceHandlerServer` on the gateway mux).
-
-The method then appears automatically in the REST API and in
-`/swagger.json`.
+The API contract lives in `api/urussu/v1/*.proto`; the workflow for adding
+an endpoint (proto change → `make generate` → handler → registration) is
+documented in [AGENTS.md](AGENTS.md#adding-a-new-api-endpoint) so it is
+maintained in one place.
 
 ## Prerequisites
 
@@ -67,8 +65,6 @@ go run ./cmd/urussu-be    # run the app on the host
 
 ### Endpoints
 
-- `GET http://localhost:8080/api/v1/dots?limit=10` — list dots from
-  PostgreSQL as JSON (REST via grpc-gateway).
 - `GET http://localhost:8080/swagger.json` — generated OpenAPI schema.
 
 ## Configuration
