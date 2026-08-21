@@ -14,6 +14,10 @@
       "description": "AuthService handles registration and login. Its endpoints are public —\nthe HTTP auth middleware skips everything under /api/v1/auth/."
     },
     {
+      "name": "CommentsService",
+      "description": "CommentsService serves user comments attached to map entities\n(dots, objects or paths)."
+    },
+    {
       "name": "ObjectsService",
       "description": "ObjectsService serves map \"object\" objects stored in PostgreSQL."
     },
@@ -97,6 +101,38 @@
         ],
         "tags": [
           "AuthService"
+        ]
+      }
+    },
+    "/api/v1/comments": {
+      "get": {
+        "summary": "ListComments returns all comments of the entity given by entity_id.",
+        "operationId": "CommentsService_ListComments",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCommentsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "entityId",
+            "description": "ID of the entity (dot, object or path) to list comments for. Required.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "CommentsService"
         ]
       }
     },
@@ -332,6 +368,29 @@
         }
       }
     },
+    "v1Comment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "description": "Author's display name, derived from the user's first and last name."
+        },
+        "body": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "v1Dot": {
       "type": "object",
       "properties": {
@@ -399,6 +458,18 @@
         }
       },
       "description": "Image is a photo of a map entity (dot, object or path) taken in a given year."
+    },
+    "v1ListCommentsResponse": {
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Comment"
+          }
+        }
+      }
     },
     "v1ListDotsResponse": {
       "type": "object",

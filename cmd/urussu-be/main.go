@@ -82,6 +82,12 @@ func run() error {
 		return fmt.Errorf("register paths gateway: %w", err)
 	}
 
+	commentsRepo := postgres.NewCommentsRepository(pool)
+	commentsService := service.NewCommentsService(commentsRepo)
+	if err := urussuv1.RegisterCommentsServiceHandlerServer(ctx, gwMux, grpc.NewCommentsHandler(commentsService, log)); err != nil {
+		return fmt.Errorf("register comments gateway: %w", err)
+	}
+
 	// Auth
 	usersRepo := postgres.NewUsersRepository(pool)
 	authService := service.NewAuthService(usersRepo, cfg.JWT.Secret, cfg.JWT.TokenTTL)

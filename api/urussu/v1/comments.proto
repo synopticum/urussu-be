@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package urussu.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "urussu-be/gen/urussu/v1;urussuv1";
+
+// CommentsService serves user comments attached to map entities
+// (dots, objects or paths).
+service CommentsService {
+  // ListComments returns all comments of the entity given by entity_id.
+  rpc ListComments(ListCommentsRequest) returns (ListCommentsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/comments"
+    };
+  }
+}
+
+message ListCommentsRequest {
+  // ID of the entity (dot, object or path) to list comments for. Required.
+  string entity_id = 1;
+}
+
+message ListCommentsResponse {
+  repeated Comment comments = 1;
+}
+
+message Comment {
+  string id = 1;
+  // Author's display name, derived from the user's first and last name.
+  string name = 2;
+  string body = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp modified_at = 5;
+}
