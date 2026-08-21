@@ -11,8 +11,8 @@ INSERT INTO users (id, role, email, password, first_name, last_name)
 VALUES (
     '9f27aa45-efd3-40e7-bba1-72cc9004de5f',
     'user',
-    'nswsergey@yandex.ru',
-    '$2a$10$A6u6pPtUBGBtH5F2Ep7GSesAhiGsPM/tT4lKUCup8kL6c24tdjiFq', -- bcrypt of "password"
+    'test@test.com',
+    '$2a$10$LIWle3L2IaDE/IHwcaoUYuWpK1pqfHLQv7BLsY6bNrzhlsD9UNDL6', -- bcrypt of "12345678"
     'Сергей',
     'Новиков'
 );
