@@ -70,7 +70,7 @@ message GetDotResponse {
 message Dot {
   string id = 1;
   string title = 2;
-  string short_description = 3;
+  string description = 3;
   string layer = 4;
   repeated double coordinates = 5;
 }

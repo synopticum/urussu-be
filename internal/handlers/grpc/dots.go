@@ -65,10 +65,10 @@ func (h *DotsHandler) ListDots(ctx context.Context, req *urussuv1.ListDotsReques
 
 func dotToProto(d domain.Dot) *urussuv1.Dot {
 	return &urussuv1.Dot{
-		Id:               d.ID,
-		Title:            d.Title,
-		ShortDescription: d.ShortDescription,
-		Layer:            d.Layer,
-		Coordinates:      d.Coordinates,
+		Id:          d.ID,
+		Title:       d.Title,
+		Description: d.Description,
+		Layer:       d.Layer,
+		Coordinates: d.Coordinates,
 	}
 }

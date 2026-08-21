@@ -29,7 +29,7 @@ func (r *DotsRepository) GetByID(ctx context.Context, id string) (domain.Dot, er
 		 FROM dots d
 		 JOIN layers l ON l.id = d.layer
 		 WHERE d.id = $1`, id).
-		Scan(&d.ID, &d.Title, &d.ShortDescription, &d.Layer, &d.Coordinates)
+		Scan(&d.ID, &d.Title, &d.Description, &d.Layer, &d.Coordinates)
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		return domain.Dot{}, domain.ErrNotFound
@@ -57,7 +57,7 @@ func (r *DotsRepository) List(ctx context.Context, limit int32, layer string) ([
 	var dots []domain.Dot
 	for rows.Next() {
 		var d domain.Dot
-		if err := rows.Scan(&d.ID, &d.Title, &d.ShortDescription, &d.Layer, &d.Coordinates); err != nil {
+		if err := rows.Scan(&d.ID, &d.Title, &d.Description, &d.Layer, &d.Coordinates); err != nil {
 			return nil, fmt.Errorf("scan dot: %w", err)
 		}
 		dots = append(dots, d)

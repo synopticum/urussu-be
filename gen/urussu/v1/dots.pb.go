@@ -211,14 +211,14 @@ func (x *GetDotResponse) GetDot() *Dot {
 }
 
 type Dot struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title            string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	ShortDescription string                 `protobuf:"bytes,3,opt,name=short_description,json=shortDescription,proto3" json:"short_description,omitempty"`
-	Layer            string                 `protobuf:"bytes,4,opt,name=layer,proto3" json:"layer,omitempty"`
-	Coordinates      []float64              `protobuf:"fixed64,5,rep,packed,name=coordinates,proto3" json:"coordinates,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Layer         string                 `protobuf:"bytes,4,opt,name=layer,proto3" json:"layer,omitempty"`
+	Coordinates   []float64              `protobuf:"fixed64,5,rep,packed,name=coordinates,proto3" json:"coordinates,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Dot) Reset() {
@@ -265,9 +265,9 @@ func (x *Dot) GetTitle() string {
 	return ""
 }
 
-func (x *Dot) GetShortDescription() string {
+func (x *Dot) GetDescription() string {
 	if x != nil {
-		return x.ShortDescription
+		return x.Description
 	}
 	return ""
 }
@@ -300,11 +300,11 @@ const file_urussu_v1_dots_proto_rawDesc = "" +
 	"\rGetDotRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"2\n" +
 	"\x0eGetDotResponse\x12 \n" +
-	"\x03dot\x18\x01 \x01(\v2\x0e.urussu.v1.DotR\x03dot\"\x90\x01\n" +
+	"\x03dot\x18\x01 \x01(\v2\x0e.urussu.v1.DotR\x03dot\"\x85\x01\n" +
 	"\x03Dot\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
-	"\x05title\x18\x02 \x01(\tR\x05title\x12+\n" +
-	"\x11short_description\x18\x03 \x01(\tR\x10shortDescription\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05layer\x18\x04 \x01(\tR\x05layer\x12 \n" +
 	"\vcoordinates\x18\x05 \x03(\x01R\vcoordinates2\xc2\x01\n" +
 	"\vDotsService\x12Y\n" +
