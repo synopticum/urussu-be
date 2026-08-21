@@ -46,3 +46,39 @@ func (r *CommentsRepository) List(ctx context.Context, entityID string) ([]domai
 
 	return comments, nil
 }
+
+// Create inserts a comment authored by userID on the given entity and
+// returns it with the DB-generated fields (id, timestamps) and the author's
+// display name resolved through the same users join List uses.
+func (r *CommentsRepository) Create(ctx context.Context, userID, entityID string, entityType domain.CommentEntityType, body string) (domain.Comment, error) {
+	// A comment belongs to exactly one entity; the FK column is part of the
+	// static SQL, one query per entity type.
+	var column string
+	switch entityType {
+	case domain.CommentEntityDot:
+		column = "dot_id"
+	case domain.CommentEntityObject:
+		column = "object_id"
+	case domain.CommentEntityPath:
+		column = "path_id"
+	default:
+		return domain.Comment{}, fmt.Errorf("unknown comment entity type %q", entityType)
+	}
+
+	var c domain.Comment
+	err := r.pool.QueryRow(ctx,
+		`WITH ins AS (
+			INSERT INTO comments (user_id, `+column+`, body) VALUES ($1, $2, $3)
+			RETURNING id, user_id, created_at, modified_at
+		)
+		SELECT ins.id::text, u.first_name || ' ' || u.last_name, ins.created_at, ins.modified_at
+		FROM ins JOIN users u ON u.id = ins.user_id`,
+		userID, entityID, body).
+		Scan(&c.ID, &c.Name, &c.CreatedAt, &c.ModifiedAt)
+	if err != nil {
+		return domain.Comment{}, fmt.Errorf("insert comment for entity %s: %w", entityID, err)
+	}
+
+	c.Body = body
+	return c, nil
+}

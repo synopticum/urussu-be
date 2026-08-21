@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CommentsService_ListComments_FullMethodName = "/urussu.v1.CommentsService/ListComments"
+	CommentsService_ListComments_FullMethodName  = "/urussu.v1.CommentsService/ListComments"
+	CommentsService_CreateComment_FullMethodName = "/urussu.v1.CommentsService/CreateComment"
 )
 
 // CommentsServiceClient is the client API for CommentsService service.
@@ -31,6 +32,9 @@ const (
 type CommentsServiceClient interface {
 	// ListComments returns all comments of the entity given by entity_id.
 	ListComments(ctx context.Context, in *ListCommentsRequest, opts ...grpc.CallOption) (*ListCommentsResponse, error)
+	// CreateComment creates a comment on the entity given by entity_id and
+	// entity_type. The author is taken from the authenticated session.
+	CreateComment(ctx context.Context, in *CreateCommentRequest, opts ...grpc.CallOption) (*CreateCommentResponse, error)
 }
 
 type commentsServiceClient struct {
@@ -51,6 +55,16 @@ func (c *commentsServiceClient) ListComments(ctx context.Context, in *ListCommen
 	return out, nil
 }
 
+func (c *commentsServiceClient) CreateComment(ctx context.Context, in *CreateCommentRequest, opts ...grpc.CallOption) (*CreateCommentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateCommentResponse)
+	err := c.cc.Invoke(ctx, CommentsService_CreateComment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommentsServiceServer is the server API for CommentsService service.
 // All implementations must embed UnimplementedCommentsServiceServer
 // for forward compatibility.
@@ -60,6 +74,9 @@ func (c *commentsServiceClient) ListComments(ctx context.Context, in *ListCommen
 type CommentsServiceServer interface {
 	// ListComments returns all comments of the entity given by entity_id.
 	ListComments(context.Context, *ListCommentsRequest) (*ListCommentsResponse, error)
+	// CreateComment creates a comment on the entity given by entity_id and
+	// entity_type. The author is taken from the authenticated session.
+	CreateComment(context.Context, *CreateCommentRequest) (*CreateCommentResponse, error)
 	mustEmbedUnimplementedCommentsServiceServer()
 }
 
@@ -72,6 +89,9 @@ type UnimplementedCommentsServiceServer struct{}
 
 func (UnimplementedCommentsServiceServer) ListComments(context.Context, *ListCommentsRequest) (*ListCommentsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListComments not implemented")
+}
+func (UnimplementedCommentsServiceServer) CreateComment(context.Context, *CreateCommentRequest) (*CreateCommentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateComment not implemented")
 }
 func (UnimplementedCommentsServiceServer) mustEmbedUnimplementedCommentsServiceServer() {}
 func (UnimplementedCommentsServiceServer) testEmbeddedByValue()                         {}
@@ -112,6 +132,24 @@ func _CommentsService_ListComments_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CommentsService_CreateComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommentsServiceServer).CreateComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CommentsService_CreateComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommentsServiceServer).CreateComment(ctx, req.(*CreateCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CommentsService_ServiceDesc is the grpc.ServiceDesc for CommentsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -122,6 +160,10 @@ var CommentsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListComments",
 			Handler:    _CommentsService_ListComments_Handler,
+		},
+		{
+			MethodName: "CreateComment",
+			Handler:    _CommentsService_CreateComment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

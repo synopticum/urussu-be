@@ -134,6 +134,37 @@
         "tags": [
           "CommentsService"
         ]
+      },
+      "post": {
+        "summary": "CreateComment creates a comment on the entity given by entity_id and\nentity_type. The author is taken from the authenticated session.",
+        "operationId": "CommentsService_CreateComment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateCommentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateCommentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CommentsService"
+        ]
       }
     },
     "/api/v1/dots": {
@@ -388,6 +419,43 @@
         "modifiedAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "v1CommentEntityType": {
+      "type": "string",
+      "enum": [
+        "COMMENT_ENTITY_TYPE_UNSPECIFIED",
+        "COMMENT_ENTITY_TYPE_DOT",
+        "COMMENT_ENTITY_TYPE_OBJECT",
+        "COMMENT_ENTITY_TYPE_PATH"
+      ],
+      "default": "COMMENT_ENTITY_TYPE_UNSPECIFIED",
+      "description": "CommentEntityType identifies the kind of entity a comment belongs to."
+    },
+    "v1CreateCommentRequest": {
+      "type": "object",
+      "properties": {
+        "entityId": {
+          "type": "string",
+          "description": "ID of the entity (dot, object or path) to comment on. Required."
+        },
+        "entityType": {
+          "$ref": "#/definitions/v1CommentEntityType",
+          "description": "Kind of the entity given by entity_id. Required."
+        },
+        "body": {
+          "type": "string",
+          "description": "Comment text. Required, max 240 characters."
+        }
+      }
+    },
+    "v1CreateCommentResponse": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "$ref": "#/definitions/v1Comment",
+          "description": "The created comment, in the same shape as ListComments items."
         }
       }
     },

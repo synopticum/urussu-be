@@ -16,6 +16,37 @@ service CommentsService {
       get: "/api/v1/comments"
     };
   }
+
+  // CreateComment creates a comment on the entity given by entity_id and
+  // entity_type. The author is taken from the authenticated session.
+  rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/comments"
+      body: "*"
+    };
+  }
+}
+
+// CommentEntityType identifies the kind of entity a comment belongs to.
+enum CommentEntityType {
+  COMMENT_ENTITY_TYPE_UNSPECIFIED = 0;
+  COMMENT_ENTITY_TYPE_DOT = 1;
+  COMMENT_ENTITY_TYPE_OBJECT = 2;
+  COMMENT_ENTITY_TYPE_PATH = 3;
+}
+
+message CreateCommentRequest {
+  // ID of the entity (dot, object or path) to comment on. Required.
+  string entity_id = 1;
+  // Kind of the entity given by entity_id. Required.
+  CommentEntityType entity_type = 2;
+  // Comment text. Required, max 240 characters.
+  string body = 3;
+}
+
+message CreateCommentResponse {
+  // The created comment, in the same shape as ListComments items.
+  Comment comment = 1;
 }
 
 message ListCommentsRequest {

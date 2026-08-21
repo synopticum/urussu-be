@@ -6,7 +6,7 @@ CREATE TABLE comments (
     path_id     UUID        REFERENCES paths (id) ON DELETE CASCADE,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     modified_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    body        TEXT        NOT NULL DEFAULT '',
+    body        VARCHAR(240) NOT NULL DEFAULT '',
 
     -- a comment belongs to exactly one entity
     CONSTRAINT comments_exactly_one_target CHECK (num_nonnulls(dot_id, object_id, path_id) = 1)
