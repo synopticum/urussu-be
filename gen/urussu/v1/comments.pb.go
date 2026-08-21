@@ -273,6 +273,96 @@ func (x *ListCommentsResponse) GetComments() []*Comment {
 	return nil
 }
 
+type GetCommentStatusRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the comment. Required.
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCommentStatusRequest) Reset() {
+	*x = GetCommentStatusRequest{}
+	mi := &file_urussu_v1_comments_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCommentStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCommentStatusRequest) ProtoMessage() {}
+
+func (x *GetCommentStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_urussu_v1_comments_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCommentStatusRequest.ProtoReflect.Descriptor instead.
+func (*GetCommentStatusRequest) Descriptor() ([]byte, []int) {
+	return file_urussu_v1_comments_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetCommentStatusRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetCommentStatusResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Async post-processing status: processing, completed or failed.
+	Status        string `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCommentStatusResponse) Reset() {
+	*x = GetCommentStatusResponse{}
+	mi := &file_urussu_v1_comments_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCommentStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCommentStatusResponse) ProtoMessage() {}
+
+func (x *GetCommentStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_urussu_v1_comments_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCommentStatusResponse.ProtoReflect.Descriptor instead.
+func (*GetCommentStatusResponse) Descriptor() ([]byte, []int) {
+	return file_urussu_v1_comments_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetCommentStatusResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
 type Comment struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -287,7 +377,7 @@ type Comment struct {
 
 func (x *Comment) Reset() {
 	*x = Comment{}
-	mi := &file_urussu_v1_comments_proto_msgTypes[4]
+	mi := &file_urussu_v1_comments_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -299,7 +389,7 @@ func (x *Comment) String() string {
 func (*Comment) ProtoMessage() {}
 
 func (x *Comment) ProtoReflect() protoreflect.Message {
-	mi := &file_urussu_v1_comments_proto_msgTypes[4]
+	mi := &file_urussu_v1_comments_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -312,7 +402,7 @@ func (x *Comment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Comment.ProtoReflect.Descriptor instead.
 func (*Comment) Descriptor() ([]byte, []int) {
-	return file_urussu_v1_comments_proto_rawDescGZIP(), []int{4}
+	return file_urussu_v1_comments_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Comment) GetId() string {
@@ -365,7 +455,11 @@ const file_urussu_v1_comments_proto_rawDesc = "" +
 	"\x13ListCommentsRequest\x12\x1b\n" +
 	"\tentity_id\x18\x01 \x01(\tR\bentityId\"F\n" +
 	"\x14ListCommentsResponse\x12.\n" +
-	"\bcomments\x18\x01 \x03(\v2\x12.urussu.v1.CommentR\bcomments\"\xb9\x01\n" +
+	"\bcomments\x18\x01 \x03(\v2\x12.urussu.v1.CommentR\bcomments\")\n" +
+	"\x17GetCommentStatusRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"2\n" +
+	"\x18GetCommentStatusResponse\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\"\xb9\x01\n" +
 	"\aComment\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -378,10 +472,11 @@ const file_urussu_v1_comments_proto_rawDesc = "" +
 	"\x1fCOMMENT_ENTITY_TYPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17COMMENT_ENTITY_TYPE_DOT\x10\x01\x12\x1e\n" +
 	"\x1aCOMMENT_ENTITY_TYPE_OBJECT\x10\x02\x12\x1c\n" +
-	"\x18COMMENT_ENTITY_TYPE_PATH\x10\x032\xed\x01\n" +
+	"\x18COMMENT_ENTITY_TYPE_PATH\x10\x032\xf1\x02\n" +
 	"\x0fCommentsService\x12i\n" +
 	"\fListComments\x12\x1e.urussu.v1.ListCommentsRequest\x1a\x1f.urussu.v1.ListCommentsResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api/v1/comments\x12o\n" +
-	"\rCreateComment\x12\x1f.urussu.v1.CreateCommentRequest\x1a .urussu.v1.CreateCommentResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/v1/commentsB\"Z urussu-be/gen/urussu/v1;urussuv1b\x06proto3"
+	"\rCreateComment\x12\x1f.urussu.v1.CreateCommentRequest\x1a .urussu.v1.CreateCommentResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/v1/comments\x12\x81\x01\n" +
+	"\x10GetCommentStatus\x12\".urussu.v1.GetCommentStatusRequest\x1a#.urussu.v1.GetCommentStatusResponse\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/api/v1/comments/{id}/statusB\"Z urussu-be/gen/urussu/v1;urussuv1b\x06proto3"
 
 var (
 	file_urussu_v1_comments_proto_rawDescOnce sync.Once
@@ -396,28 +491,32 @@ func file_urussu_v1_comments_proto_rawDescGZIP() []byte {
 }
 
 var file_urussu_v1_comments_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_urussu_v1_comments_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_urussu_v1_comments_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_urussu_v1_comments_proto_goTypes = []any{
-	(CommentEntityType)(0),        // 0: urussu.v1.CommentEntityType
-	(*CreateCommentRequest)(nil),  // 1: urussu.v1.CreateCommentRequest
-	(*CreateCommentResponse)(nil), // 2: urussu.v1.CreateCommentResponse
-	(*ListCommentsRequest)(nil),   // 3: urussu.v1.ListCommentsRequest
-	(*ListCommentsResponse)(nil),  // 4: urussu.v1.ListCommentsResponse
-	(*Comment)(nil),               // 5: urussu.v1.Comment
-	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
+	(CommentEntityType)(0),           // 0: urussu.v1.CommentEntityType
+	(*CreateCommentRequest)(nil),     // 1: urussu.v1.CreateCommentRequest
+	(*CreateCommentResponse)(nil),    // 2: urussu.v1.CreateCommentResponse
+	(*ListCommentsRequest)(nil),      // 3: urussu.v1.ListCommentsRequest
+	(*ListCommentsResponse)(nil),     // 4: urussu.v1.ListCommentsResponse
+	(*GetCommentStatusRequest)(nil),  // 5: urussu.v1.GetCommentStatusRequest
+	(*GetCommentStatusResponse)(nil), // 6: urussu.v1.GetCommentStatusResponse
+	(*Comment)(nil),                  // 7: urussu.v1.Comment
+	(*timestamppb.Timestamp)(nil),    // 8: google.protobuf.Timestamp
 }
 var file_urussu_v1_comments_proto_depIdxs = []int32{
 	0, // 0: urussu.v1.CreateCommentRequest.entity_type:type_name -> urussu.v1.CommentEntityType
-	5, // 1: urussu.v1.CreateCommentResponse.comment:type_name -> urussu.v1.Comment
-	5, // 2: urussu.v1.ListCommentsResponse.comments:type_name -> urussu.v1.Comment
-	6, // 3: urussu.v1.Comment.created_at:type_name -> google.protobuf.Timestamp
-	6, // 4: urussu.v1.Comment.modified_at:type_name -> google.protobuf.Timestamp
+	7, // 1: urussu.v1.CreateCommentResponse.comment:type_name -> urussu.v1.Comment
+	7, // 2: urussu.v1.ListCommentsResponse.comments:type_name -> urussu.v1.Comment
+	8, // 3: urussu.v1.Comment.created_at:type_name -> google.protobuf.Timestamp
+	8, // 4: urussu.v1.Comment.modified_at:type_name -> google.protobuf.Timestamp
 	3, // 5: urussu.v1.CommentsService.ListComments:input_type -> urussu.v1.ListCommentsRequest
 	1, // 6: urussu.v1.CommentsService.CreateComment:input_type -> urussu.v1.CreateCommentRequest
-	4, // 7: urussu.v1.CommentsService.ListComments:output_type -> urussu.v1.ListCommentsResponse
-	2, // 8: urussu.v1.CommentsService.CreateComment:output_type -> urussu.v1.CreateCommentResponse
-	7, // [7:9] is the sub-list for method output_type
-	5, // [5:7] is the sub-list for method input_type
+	5, // 7: urussu.v1.CommentsService.GetCommentStatus:input_type -> urussu.v1.GetCommentStatusRequest
+	4, // 8: urussu.v1.CommentsService.ListComments:output_type -> urussu.v1.ListCommentsResponse
+	2, // 9: urussu.v1.CommentsService.CreateComment:output_type -> urussu.v1.CreateCommentResponse
+	6, // 10: urussu.v1.CommentsService.GetCommentStatus:output_type -> urussu.v1.GetCommentStatusResponse
+	8, // [8:11] is the sub-list for method output_type
+	5, // [5:8] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
 	5, // [5:5] is the sub-list for extension extendee
 	0, // [0:5] is the sub-list for field type_name
@@ -434,7 +533,7 @@ func file_urussu_v1_comments_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_urussu_v1_comments_proto_rawDesc), len(file_urussu_v1_comments_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

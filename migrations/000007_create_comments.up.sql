@@ -7,6 +7,9 @@ CREATE TABLE comments (
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     modified_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     body        VARCHAR(240) NOT NULL DEFAULT '',
+    -- async post-processing (email + audit) flips this to completed/failed
+    status      VARCHAR(20) NOT NULL DEFAULT 'processing'
+        CHECK (status IN ('processing', 'completed', 'failed')),
 
     -- a comment belongs to exactly one entity
     CONSTRAINT comments_exactly_one_target CHECK (num_nonnulls(dot_id, object_id, path_id) = 1)

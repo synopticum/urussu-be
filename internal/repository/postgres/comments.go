@@ -2,8 +2,10 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"urussu-be/internal/domain"
@@ -81,4 +83,33 @@ func (r *CommentsRepository) Create(ctx context.Context, userID, entityID string
 
 	c.Body = body
 	return c, nil
+}
+
+// GetStatus returns the async post-processing status of the given comment.
+func (r *CommentsRepository) GetStatus(ctx context.Context, id string) (domain.CommentStatus, error) {
+	var status domain.CommentStatus
+	err := r.pool.QueryRow(ctx,
+		`SELECT status FROM comments WHERE id = $1`, id).
+		Scan(&status)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", domain.ErrNotFound
+	}
+
+	if err != nil {
+		return "", fmt.Errorf("query status of comment %s: %w", id, err)
+	}
+
+	return status, nil
+}
+
+// UpdateStatus sets the async post-processing status of the given comment.
+// Called by the background pipeline once it finishes.
+func (r *CommentsRepository) UpdateStatus(ctx context.Context, id string, status domain.CommentStatus) error {
+	if _, err := r.pool.Exec(ctx,
+		`UPDATE comments SET status = $2, modified_at = now() WHERE id = $1`, id, status); err != nil {
+		return fmt.Errorf("update status of comment %s: %w", id, err)
+	}
+
+	return nil
 }

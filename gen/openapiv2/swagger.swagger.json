@@ -167,6 +167,38 @@
         ]
       }
     },
+    "/api/v1/comments/{id}/status": {
+      "get": {
+        "summary": "GetCommentStatus returns the async post-processing status of the comment\ngiven by id.",
+        "operationId": "CommentsService_GetCommentStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetCommentStatusResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the comment. Required.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "CommentsService"
+        ]
+      }
+    },
     "/api/v1/dots": {
       "get": {
         "summary": "ListDots returns dots from the database.",
@@ -487,6 +519,15 @@
             "type": "object",
             "$ref": "#/definitions/v1Image"
           }
+        }
+      }
+    },
+    "v1GetCommentStatusResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Async post-processing status: processing, completed or failed."
         }
       }
     },

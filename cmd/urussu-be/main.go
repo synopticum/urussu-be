@@ -13,6 +13,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"
+	"google.golang.org/protobuf/proto"
 
 	urussuv1 "urussu-be/gen/urussu/v1"
 	"urussu-be/internal/auth"
@@ -61,7 +62,17 @@ func run() error {
 	// HTTP server: grpc-gateway handlers run in-process (no gRPC listener),
 	// plus the generated OpenAPI schema.
 	httpMux := http.NewServeMux()
-	gwMux := runtime.NewServeMux()
+	gwMux := runtime.NewServeMux(
+		runtime.WithForwardResponseOption(func(_ context.Context, w http.ResponseWriter, msg proto.Message) error {
+			// CreateComment kicks off a detached async pipeline; 202 reflects
+			// that the comment is stored but its post-processing (email,
+			// audit) is still running.
+			if _, ok := msg.(*urussuv1.CreateCommentResponse); ok {
+				w.WriteHeader(http.StatusAccepted)
+			}
+			return nil
+		}),
+	)
 
 	// Services
 	dotsRepo := postgres.NewDotsRepository(pool)
@@ -83,7 +94,9 @@ func run() error {
 	}
 
 	commentsRepo := postgres.NewCommentsRepository(pool)
-	commentsService := service.NewCommentsService(commentsRepo)
+	// The signal context is the pipeline parent: detached from any single
+	// request, yet cancelled on SIGINT/SIGTERM so tasks shut down cleanly.
+	commentsService := service.NewCommentsService(commentsRepo, log, ctx)
 	if err := urussuv1.RegisterCommentsServiceHandlerServer(ctx, gwMux, grpc.NewCommentsHandler(commentsService, log)); err != nil {
 		return fmt.Errorf("register comments gateway: %w", err)
 	}
@@ -144,6 +157,12 @@ func run() error {
 	defer cancel()
 	if err := httpServer.Shutdown(shutdownCtx); err != nil {
 		return fmt.Errorf("http shutdown: %w", err)
+	}
+
+	// Wait for in-flight comment pipelines so their final status UPDATEs
+	// cannot race the pool.Close() deferred above.
+	if err := commentsService.Shutdown(shutdownCtx); err != nil {
+		log.Warn("comment pipelines did not finish in time", slog.Any("error", err))
 	}
 
 	return nil

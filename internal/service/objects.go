@@ -28,7 +28,7 @@ func (s *ObjectsService) GetObject(ctx context.Context, id string) (domain.Objec
 
 func (s *ObjectsService) ListObjects(ctx context.Context, limit int32) ([]domain.Object, error) {
 	if limit <= 0 {
-		limit = 1000
+		limit = 3000
 	}
 
 	return s.repo.List(ctx, limit)

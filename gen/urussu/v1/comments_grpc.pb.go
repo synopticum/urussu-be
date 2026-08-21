@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CommentsService_ListComments_FullMethodName  = "/urussu.v1.CommentsService/ListComments"
-	CommentsService_CreateComment_FullMethodName = "/urussu.v1.CommentsService/CreateComment"
+	CommentsService_ListComments_FullMethodName     = "/urussu.v1.CommentsService/ListComments"
+	CommentsService_CreateComment_FullMethodName    = "/urussu.v1.CommentsService/CreateComment"
+	CommentsService_GetCommentStatus_FullMethodName = "/urussu.v1.CommentsService/GetCommentStatus"
 )
 
 // CommentsServiceClient is the client API for CommentsService service.
@@ -35,6 +36,9 @@ type CommentsServiceClient interface {
 	// CreateComment creates a comment on the entity given by entity_id and
 	// entity_type. The author is taken from the authenticated session.
 	CreateComment(ctx context.Context, in *CreateCommentRequest, opts ...grpc.CallOption) (*CreateCommentResponse, error)
+	// GetCommentStatus returns the async post-processing status of the comment
+	// given by id.
+	GetCommentStatus(ctx context.Context, in *GetCommentStatusRequest, opts ...grpc.CallOption) (*GetCommentStatusResponse, error)
 }
 
 type commentsServiceClient struct {
@@ -65,6 +69,16 @@ func (c *commentsServiceClient) CreateComment(ctx context.Context, in *CreateCom
 	return out, nil
 }
 
+func (c *commentsServiceClient) GetCommentStatus(ctx context.Context, in *GetCommentStatusRequest, opts ...grpc.CallOption) (*GetCommentStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCommentStatusResponse)
+	err := c.cc.Invoke(ctx, CommentsService_GetCommentStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommentsServiceServer is the server API for CommentsService service.
 // All implementations must embed UnimplementedCommentsServiceServer
 // for forward compatibility.
@@ -77,6 +91,9 @@ type CommentsServiceServer interface {
 	// CreateComment creates a comment on the entity given by entity_id and
 	// entity_type. The author is taken from the authenticated session.
 	CreateComment(context.Context, *CreateCommentRequest) (*CreateCommentResponse, error)
+	// GetCommentStatus returns the async post-processing status of the comment
+	// given by id.
+	GetCommentStatus(context.Context, *GetCommentStatusRequest) (*GetCommentStatusResponse, error)
 	mustEmbedUnimplementedCommentsServiceServer()
 }
 
@@ -92,6 +109,9 @@ func (UnimplementedCommentsServiceServer) ListComments(context.Context, *ListCom
 }
 func (UnimplementedCommentsServiceServer) CreateComment(context.Context, *CreateCommentRequest) (*CreateCommentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateComment not implemented")
+}
+func (UnimplementedCommentsServiceServer) GetCommentStatus(context.Context, *GetCommentStatusRequest) (*GetCommentStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCommentStatus not implemented")
 }
 func (UnimplementedCommentsServiceServer) mustEmbedUnimplementedCommentsServiceServer() {}
 func (UnimplementedCommentsServiceServer) testEmbeddedByValue()                         {}
@@ -150,6 +170,24 @@ func _CommentsService_CreateComment_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CommentsService_GetCommentStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommentStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommentsServiceServer).GetCommentStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CommentsService_GetCommentStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommentsServiceServer).GetCommentStatus(ctx, req.(*GetCommentStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CommentsService_ServiceDesc is the grpc.ServiceDesc for CommentsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -164,6 +202,10 @@ var CommentsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateComment",
 			Handler:    _CommentsService_CreateComment_Handler,
+		},
+		{
+			MethodName: "GetCommentStatus",
+			Handler:    _CommentsService_GetCommentStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

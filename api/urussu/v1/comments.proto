@@ -25,6 +25,14 @@ service CommentsService {
       body: "*"
     };
   }
+
+  // GetCommentStatus returns the async post-processing status of the comment
+  // given by id.
+  rpc GetCommentStatus(GetCommentStatusRequest) returns (GetCommentStatusResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/comments/{id}/status"
+    };
+  }
 }
 
 // CommentEntityType identifies the kind of entity a comment belongs to.
@@ -56,6 +64,16 @@ message ListCommentsRequest {
 
 message ListCommentsResponse {
   repeated Comment comments = 1;
+}
+
+message GetCommentStatusRequest {
+  // ID of the comment. Required.
+  string id = 1;
+}
+
+message GetCommentStatusResponse {
+  // Async post-processing status: processing, completed or failed.
+  string status = 1;
 }
 
 message Comment {

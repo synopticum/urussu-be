@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"unicode/utf8"
 
@@ -23,6 +24,7 @@ const maxCommentBodyLen = 240
 type CommentsService interface {
 	ListComments(ctx context.Context, entityID string) ([]domain.Comment, error)
 	CreateComment(ctx context.Context, userID, entityID string, entityType domain.CommentEntityType, body string) (domain.Comment, error)
+	GetCommentStatus(ctx context.Context, id string) (domain.CommentStatus, error)
 }
 
 // CommentsHandler implements urussuv1.CommentsServiceServer.
@@ -95,6 +97,23 @@ func (h *CommentsHandler) CreateComment(ctx context.Context, req *urussuv1.Creat
 	}
 
 	return &urussuv1.CreateCommentResponse{Comment: commentToProto(comment)}, nil
+}
+
+func (h *CommentsHandler) GetCommentStatus(ctx context.Context, req *urussuv1.GetCommentStatusRequest) (*urussuv1.GetCommentStatusResponse, error) {
+	if req.GetId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "id is required")
+	}
+
+	commentStatus, err := h.svc.GetCommentStatus(ctx, req.GetId())
+	if errors.Is(err, domain.ErrNotFound) {
+		return nil, status.Error(codes.NotFound, "comment not found")
+	}
+	if err != nil {
+		h.log.ErrorContext(ctx, "failed to get comment status", slog.String("comment_id", req.GetId()), slog.Any("error", err))
+		return nil, status.Error(codes.Internal, "failed to get comment status")
+	}
+
+	return &urussuv1.GetCommentStatusResponse{Status: string(commentStatus)}, nil
 }
 
 func commentToProto(c domain.Comment) *urussuv1.Comment {
