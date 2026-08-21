@@ -10,4 +10,5 @@ type Object struct {
 	Radius *float32
 	// Coordinates is the polygon outline as [latitude, longitude] pairs.
 	Coordinates [][]float64
+	Images      []Image
 }

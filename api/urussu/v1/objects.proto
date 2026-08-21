@@ -3,6 +3,7 @@ syntax = "proto3";
 package urussu.v1;
 
 import "google/api/annotations.proto";
+import "urussu/v1/images.proto";
 
 option go_package = "urussu-be/gen/urussu/v1;urussuv1";
 
@@ -50,6 +51,7 @@ message Object {
   optional float radius = 5;
   // Polygon outline of the object on the map.
   repeated Point coordinates = 6;
+  repeated Image images = 7;
 }
 
 // Point is a position on the map.

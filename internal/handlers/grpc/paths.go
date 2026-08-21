@@ -68,6 +68,7 @@ func pathToProto(p domain.Path) *urussuv1.Path {
 		Title:       p.Title,
 		Description: p.Description,
 		Coordinates: make([]*urussuv1.Point, 0, len(p.Coordinates)),
+		Images:      imagesToProto(p.Images),
 	}
 
 	for _, c := range p.Coordinates {

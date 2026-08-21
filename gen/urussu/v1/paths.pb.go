@@ -207,6 +207,7 @@ type Path struct {
 	Description string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	// Polyline of the path on the map.
 	Coordinates   []*Point `protobuf:"bytes,4,rep,name=coordinates,proto3" json:"coordinates,omitempty"`
+	Images        []*Image `protobuf:"bytes,5,rep,name=images,proto3" json:"images,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -269,11 +270,18 @@ func (x *Path) GetCoordinates() []*Point {
 	return nil
 }
 
+func (x *Path) GetImages() []*Image {
+	if x != nil {
+		return x.Images
+	}
+	return nil
+}
+
 var File_urussu_v1_paths_proto protoreflect.FileDescriptor
 
 const file_urussu_v1_paths_proto_rawDesc = "" +
 	"\n" +
-	"\x15urussu/v1/paths.proto\x12\turussu.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17urussu/v1/objects.proto\"(\n" +
+	"\x15urussu/v1/paths.proto\x12\turussu.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x16urussu/v1/images.proto\x1a\x17urussu/v1/objects.proto\"(\n" +
 	"\x10ListPathsRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\":\n" +
 	"\x11ListPathsResponse\x12%\n" +
@@ -281,12 +289,13 @@ const file_urussu_v1_paths_proto_rawDesc = "" +
 	"\x0eGetPathRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"6\n" +
 	"\x0fGetPathResponse\x12#\n" +
-	"\x04path\x18\x01 \x01(\v2\x0f.urussu.v1.PathR\x04path\"\x82\x01\n" +
+	"\x04path\x18\x01 \x01(\v2\x0f.urussu.v1.PathR\x04path\"\xac\x01\n" +
 	"\x04Path\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x122\n" +
-	"\vcoordinates\x18\x04 \x03(\v2\x10.urussu.v1.PointR\vcoordinates2\xcb\x01\n" +
+	"\vcoordinates\x18\x04 \x03(\v2\x10.urussu.v1.PointR\vcoordinates\x12(\n" +
+	"\x06images\x18\x05 \x03(\v2\x10.urussu.v1.ImageR\x06images2\xcb\x01\n" +
 	"\fPathsService\x12]\n" +
 	"\tListPaths\x12\x1b.urussu.v1.ListPathsRequest\x1a\x1c.urussu.v1.ListPathsResponse\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/api/v1/paths\x12\\\n" +
 	"\aGetPath\x12\x19.urussu.v1.GetPathRequest\x1a\x1a.urussu.v1.GetPathResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/api/v1/paths/{id}B\"Z urussu-be/gen/urussu/v1;urussuv1b\x06proto3"
@@ -311,20 +320,22 @@ var file_urussu_v1_paths_proto_goTypes = []any{
 	(*GetPathResponse)(nil),   // 3: urussu.v1.GetPathResponse
 	(*Path)(nil),              // 4: urussu.v1.Path
 	(*Point)(nil),             // 5: urussu.v1.Point
+	(*Image)(nil),             // 6: urussu.v1.Image
 }
 var file_urussu_v1_paths_proto_depIdxs = []int32{
 	4, // 0: urussu.v1.ListPathsResponse.paths:type_name -> urussu.v1.Path
 	4, // 1: urussu.v1.GetPathResponse.path:type_name -> urussu.v1.Path
 	5, // 2: urussu.v1.Path.coordinates:type_name -> urussu.v1.Point
-	0, // 3: urussu.v1.PathsService.ListPaths:input_type -> urussu.v1.ListPathsRequest
-	2, // 4: urussu.v1.PathsService.GetPath:input_type -> urussu.v1.GetPathRequest
-	1, // 5: urussu.v1.PathsService.ListPaths:output_type -> urussu.v1.ListPathsResponse
-	3, // 6: urussu.v1.PathsService.GetPath:output_type -> urussu.v1.GetPathResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	6, // 3: urussu.v1.Path.images:type_name -> urussu.v1.Image
+	0, // 4: urussu.v1.PathsService.ListPaths:input_type -> urussu.v1.ListPathsRequest
+	2, // 5: urussu.v1.PathsService.GetPath:input_type -> urussu.v1.GetPathRequest
+	1, // 6: urussu.v1.PathsService.ListPaths:output_type -> urussu.v1.ListPathsResponse
+	3, // 7: urussu.v1.PathsService.GetPath:output_type -> urussu.v1.GetPathResponse
+	6, // [6:8] is the sub-list for method output_type
+	4, // [4:6] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_urussu_v1_paths_proto_init() }
@@ -332,6 +343,7 @@ func file_urussu_v1_paths_proto_init() {
 	if File_urussu_v1_paths_proto != nil {
 		return
 	}
+	file_urussu_v1_images_proto_init()
 	file_urussu_v1_objects_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{

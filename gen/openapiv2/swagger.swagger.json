@@ -353,6 +353,13 @@
             "type": "number",
             "format": "double"
           }
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Image"
+          }
         }
       }
     },
@@ -379,6 +386,19 @@
           "$ref": "#/definitions/v1Path"
         }
       }
+    },
+    "v1Image": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "year": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "description": "Image is a photo of a map entity (dot, object or path) taken in a given year."
     },
     "v1ListDotsResponse": {
       "type": "object",
@@ -467,6 +487,13 @@
             "$ref": "#/definitions/v1Point"
           },
           "description": "Polygon outline of the object on the map."
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Image"
+          }
         }
       }
     },
@@ -489,6 +516,13 @@
             "$ref": "#/definitions/v1Point"
           },
           "description": "Polyline of the path on the map."
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Image"
+          }
         }
       }
     },

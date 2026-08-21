@@ -3,6 +3,7 @@ syntax = "proto3";
 package urussu.v1;
 
 import "google/api/annotations.proto";
+import "urussu/v1/images.proto";
 import "urussu/v1/objects.proto";
 
 option go_package = "urussu-be/gen/urussu/v1;urussuv1";
@@ -48,4 +49,5 @@ message Path {
   string description = 3;
   // Polyline of the path on the map.
   repeated Point coordinates = 4;
+  repeated Image images = 5;
 }

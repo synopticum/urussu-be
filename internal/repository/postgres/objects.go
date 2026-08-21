@@ -22,12 +22,16 @@ func NewObjectsRepository(pool *pgxpool.Pool) *ObjectsRepository {
 
 func (r *ObjectsRepository) GetByID(ctx context.Context, id string) (domain.Object, error) {
 	var o domain.Object
+	var imagesJSON []byte
 
 	err := r.pool.QueryRow(ctx,
-		`SELECT o.id::text, o.house, o.street, o.description, o.radius, o.coordinates
+		`SELECT o.id::text, o.house, o.street, o.description, o.radius, o.coordinates,
+		        (SELECT jsonb_agg(jsonb_build_object('id', i.id::text, 'year', i.year) ORDER BY i.year)
+		         FROM images i
+		         WHERE i.entity_type = 'object' AND i.entity_id = o.id::text)
 		 FROM objects o
 		 WHERE o.id = $1`, id).
-		Scan(&o.ID, &o.House, &o.Street, &o.Description, &o.Radius, &o.Coordinates)
+		Scan(&o.ID, &o.House, &o.Street, &o.Description, &o.Radius, &o.Coordinates, &imagesJSON)
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		return domain.Object{}, domain.ErrNotFound
@@ -37,12 +41,20 @@ func (r *ObjectsRepository) GetByID(ctx context.Context, id string) (domain.Obje
 		return domain.Object{}, fmt.Errorf("query object %s: %w", id, err)
 	}
 
+	o.Images, err = decodeImages(imagesJSON)
+	if err != nil {
+		return domain.Object{}, fmt.Errorf("query object %s: %w", id, err)
+	}
+
 	return o, nil
 }
 
 func (r *ObjectsRepository) List(ctx context.Context, limit int32) ([]domain.Object, error) {
 	rows, err := r.pool.Query(ctx,
-		`SELECT o.id::text, o.house, o.street, o.description, o.radius, o.coordinates
+		`SELECT o.id::text, o.house, o.street, o.description, o.radius, o.coordinates,
+		        (SELECT jsonb_agg(jsonb_build_object('id', i.id::text, 'year', i.year) ORDER BY i.year)
+		         FROM images i
+		         WHERE i.entity_type = 'object' AND i.entity_id = o.id::text)
 		 FROM objects o
 		 LIMIT $1`, limit)
 	if err != nil {
@@ -53,7 +65,12 @@ func (r *ObjectsRepository) List(ctx context.Context, limit int32) ([]domain.Obj
 	var objects []domain.Object
 	for rows.Next() {
 		var o domain.Object
-		if err := rows.Scan(&o.ID, &o.House, &o.Street, &o.Description, &o.Radius, &o.Coordinates); err != nil {
+		var imagesJSON []byte
+		if err := rows.Scan(&o.ID, &o.House, &o.Street, &o.Description, &o.Radius, &o.Coordinates, &imagesJSON); err != nil {
+			return nil, fmt.Errorf("scan object: %w", err)
+		}
+		o.Images, err = decodeImages(imagesJSON)
+		if err != nil {
 			return nil, fmt.Errorf("scan object: %w", err)
 		}
 		objects = append(objects, o)

@@ -23,13 +23,17 @@ func NewDotsRepository(pool *pgxpool.Pool) *DotsRepository {
 
 func (r *DotsRepository) GetByID(ctx context.Context, id string) (domain.Dot, error) {
 	var d domain.Dot
+	var imagesJSON []byte
 
 	err := r.pool.QueryRow(ctx,
-		`SELECT d.id::text, d.title, d.description, l.name, d.coordinates
+		`SELECT d.id::text, d.title, d.description, l.name, d.coordinates,
+		        (SELECT jsonb_agg(jsonb_build_object('id', i.id::text, 'year', i.year) ORDER BY i.year)
+		         FROM images i
+		         WHERE i.entity_type = 'dot' AND i.entity_id = d.id::text)
 		 FROM dots d
 		 JOIN layers l ON l.id = d.layer
 		 WHERE d.id = $1`, id).
-		Scan(&d.ID, &d.Title, &d.Description, &d.Layer, &d.Coordinates)
+		Scan(&d.ID, &d.Title, &d.Description, &d.Layer, &d.Coordinates, &imagesJSON)
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		return domain.Dot{}, domain.ErrNotFound
@@ -39,12 +43,20 @@ func (r *DotsRepository) GetByID(ctx context.Context, id string) (domain.Dot, er
 		return domain.Dot{}, fmt.Errorf("query dot %s: %w", id, err)
 	}
 
+	d.Images, err = decodeImages(imagesJSON)
+	if err != nil {
+		return domain.Dot{}, fmt.Errorf("query dot %s: %w", id, err)
+	}
+
 	return d, nil
 }
 
 func (r *DotsRepository) List(ctx context.Context, limit int32, layer string) ([]domain.Dot, error) {
 	rows, err := r.pool.Query(ctx,
-		`SELECT d.id::text, d.title, d.description, l.name, d.coordinates
+		`SELECT d.id::text, d.title, d.description, l.name, d.coordinates,
+		        (SELECT jsonb_agg(jsonb_build_object('id', i.id::text, 'year', i.year) ORDER BY i.year)
+		         FROM images i
+		         WHERE i.entity_type = 'dot' AND i.entity_id = d.id::text)
 		 FROM dots d
 		 JOIN layers l ON l.id = d.layer
 		 WHERE ($2::text = '' OR l.name = $2)
@@ -57,7 +69,12 @@ func (r *DotsRepository) List(ctx context.Context, limit int32, layer string) ([
 	var dots []domain.Dot
 	for rows.Next() {
 		var d domain.Dot
-		if err := rows.Scan(&d.ID, &d.Title, &d.Description, &d.Layer, &d.Coordinates); err != nil {
+		var imagesJSON []byte
+		if err := rows.Scan(&d.ID, &d.Title, &d.Description, &d.Layer, &d.Coordinates, &imagesJSON); err != nil {
+			return nil, fmt.Errorf("scan dot: %w", err)
+		}
+		d.Images, err = decodeImages(imagesJSON)
+		if err != nil {
 			return nil, fmt.Errorf("scan dot: %w", err)
 		}
 		dots = append(dots, d)

@@ -210,6 +210,7 @@ type Object struct {
 	Radius *float32 `protobuf:"fixed32,5,opt,name=radius,proto3,oneof" json:"radius,omitempty"`
 	// Polygon outline of the object on the map.
 	Coordinates   []*Point `protobuf:"bytes,6,rep,name=coordinates,proto3" json:"coordinates,omitempty"`
+	Images        []*Image `protobuf:"bytes,7,rep,name=images,proto3" json:"images,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -286,6 +287,13 @@ func (x *Object) GetCoordinates() []*Point {
 	return nil
 }
 
+func (x *Object) GetImages() []*Image {
+	if x != nil {
+		return x.Images
+	}
+	return nil
+}
+
 // Point is a position on the map.
 type Point struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -343,7 +351,7 @@ var File_urussu_v1_objects_proto protoreflect.FileDescriptor
 
 const file_urussu_v1_objects_proto_rawDesc = "" +
 	"\n" +
-	"\x17urussu/v1/objects.proto\x12\turussu.v1\x1a\x1cgoogle/api/annotations.proto\"*\n" +
+	"\x17urussu/v1/objects.proto\x12\turussu.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x16urussu/v1/images.proto\"*\n" +
 	"\x12ListObjectsRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\"B\n" +
 	"\x13ListObjectsResponse\x12+\n" +
@@ -351,14 +359,15 @@ const file_urussu_v1_objects_proto_rawDesc = "" +
 	"\x10GetObjectRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\">\n" +
 	"\x11GetObjectResponse\x12)\n" +
-	"\x06object\x18\x01 \x01(\v2\x11.urussu.v1.ObjectR\x06object\"\xc4\x01\n" +
+	"\x06object\x18\x01 \x01(\v2\x11.urussu.v1.ObjectR\x06object\"\xee\x01\n" +
 	"\x06Object\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05house\x18\x02 \x01(\tR\x05house\x12\x16\n" +
 	"\x06street\x18\x03 \x01(\tR\x06street\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x1b\n" +
 	"\x06radius\x18\x05 \x01(\x02H\x00R\x06radius\x88\x01\x01\x122\n" +
-	"\vcoordinates\x18\x06 \x03(\v2\x10.urussu.v1.PointR\vcoordinatesB\t\n" +
+	"\vcoordinates\x18\x06 \x03(\v2\x10.urussu.v1.PointR\vcoordinates\x12(\n" +
+	"\x06images\x18\a \x03(\v2\x10.urussu.v1.ImageR\x06imagesB\t\n" +
 	"\a_radius\"A\n" +
 	"\x05Point\x12\x1a\n" +
 	"\blatitude\x18\x01 \x01(\x01R\blatitude\x12\x1c\n" +
@@ -387,20 +396,22 @@ var file_urussu_v1_objects_proto_goTypes = []any{
 	(*GetObjectResponse)(nil),   // 3: urussu.v1.GetObjectResponse
 	(*Object)(nil),              // 4: urussu.v1.Object
 	(*Point)(nil),               // 5: urussu.v1.Point
+	(*Image)(nil),               // 6: urussu.v1.Image
 }
 var file_urussu_v1_objects_proto_depIdxs = []int32{
 	4, // 0: urussu.v1.ListObjectsResponse.objects:type_name -> urussu.v1.Object
 	4, // 1: urussu.v1.GetObjectResponse.object:type_name -> urussu.v1.Object
 	5, // 2: urussu.v1.Object.coordinates:type_name -> urussu.v1.Point
-	0, // 3: urussu.v1.ObjectsService.ListObjects:input_type -> urussu.v1.ListObjectsRequest
-	2, // 4: urussu.v1.ObjectsService.GetObject:input_type -> urussu.v1.GetObjectRequest
-	1, // 5: urussu.v1.ObjectsService.ListObjects:output_type -> urussu.v1.ListObjectsResponse
-	3, // 6: urussu.v1.ObjectsService.GetObject:output_type -> urussu.v1.GetObjectResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	6, // 3: urussu.v1.Object.images:type_name -> urussu.v1.Image
+	0, // 4: urussu.v1.ObjectsService.ListObjects:input_type -> urussu.v1.ListObjectsRequest
+	2, // 5: urussu.v1.ObjectsService.GetObject:input_type -> urussu.v1.GetObjectRequest
+	1, // 6: urussu.v1.ObjectsService.ListObjects:output_type -> urussu.v1.ListObjectsResponse
+	3, // 7: urussu.v1.ObjectsService.GetObject:output_type -> urussu.v1.GetObjectResponse
+	6, // [6:8] is the sub-list for method output_type
+	4, // [4:6] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_urussu_v1_objects_proto_init() }
@@ -408,6 +419,7 @@ func file_urussu_v1_objects_proto_init() {
 	if File_urussu_v1_objects_proto != nil {
 		return
 	}
+	file_urussu_v1_images_proto_init()
 	file_urussu_v1_objects_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

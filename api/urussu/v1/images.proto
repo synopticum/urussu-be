@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package urussu.v1;
+
+option go_package = "urussu-be/gen/urussu/v1;urussuv1";
+
+// Image is a photo of a map entity (dot, object or path) taken in a given year.
+message Image {
+  string id = 1;
+  int32 year = 2;
+}

@@ -217,6 +217,7 @@ type Dot struct {
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Layer         string                 `protobuf:"bytes,4,opt,name=layer,proto3" json:"layer,omitempty"`
 	Coordinates   []float64              `protobuf:"fixed64,5,rep,packed,name=coordinates,proto3" json:"coordinates,omitempty"`
+	Images        []*Image               `protobuf:"bytes,6,rep,name=images,proto3" json:"images,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -286,11 +287,18 @@ func (x *Dot) GetCoordinates() []float64 {
 	return nil
 }
 
+func (x *Dot) GetImages() []*Image {
+	if x != nil {
+		return x.Images
+	}
+	return nil
+}
+
 var File_urussu_v1_dots_proto protoreflect.FileDescriptor
 
 const file_urussu_v1_dots_proto_rawDesc = "" +
 	"\n" +
-	"\x14urussu/v1/dots.proto\x12\turussu.v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"L\n" +
+	"\x14urussu/v1/dots.proto\x12\turussu.v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\x1a\x16urussu/v1/images.proto\"L\n" +
 	"\x0fListDotsRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x19\n" +
 	"\x05layer\x18\x02 \x01(\tH\x00R\x05layer\x88\x01\x01B\b\n" +
@@ -300,13 +308,14 @@ const file_urussu_v1_dots_proto_rawDesc = "" +
 	"\rGetDotRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"2\n" +
 	"\x0eGetDotResponse\x12 \n" +
-	"\x03dot\x18\x01 \x01(\v2\x0e.urussu.v1.DotR\x03dot\"\x85\x01\n" +
+	"\x03dot\x18\x01 \x01(\v2\x0e.urussu.v1.DotR\x03dot\"\xaf\x01\n" +
 	"\x03Dot\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05layer\x18\x04 \x01(\tR\x05layer\x12 \n" +
-	"\vcoordinates\x18\x05 \x03(\x01R\vcoordinates2\xc2\x01\n" +
+	"\vcoordinates\x18\x05 \x03(\x01R\vcoordinates\x12(\n" +
+	"\x06images\x18\x06 \x03(\v2\x10.urussu.v1.ImageR\x06images2\xc2\x01\n" +
 	"\vDotsService\x12Y\n" +
 	"\bListDots\x12\x1a.urussu.v1.ListDotsRequest\x1a\x1b.urussu.v1.ListDotsResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/api/v1/dots\x12X\n" +
 	"\x06GetDot\x12\x18.urussu.v1.GetDotRequest\x1a\x19.urussu.v1.GetDotResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/api/v1/dots/{id}B\xc2\x01\x92A\x9c\x01\x12\x16\n" +
@@ -333,19 +342,21 @@ var file_urussu_v1_dots_proto_goTypes = []any{
 	(*GetDotRequest)(nil),    // 2: urussu.v1.GetDotRequest
 	(*GetDotResponse)(nil),   // 3: urussu.v1.GetDotResponse
 	(*Dot)(nil),              // 4: urussu.v1.Dot
+	(*Image)(nil),            // 5: urussu.v1.Image
 }
 var file_urussu_v1_dots_proto_depIdxs = []int32{
 	4, // 0: urussu.v1.ListDotsResponse.dots:type_name -> urussu.v1.Dot
 	4, // 1: urussu.v1.GetDotResponse.dot:type_name -> urussu.v1.Dot
-	0, // 2: urussu.v1.DotsService.ListDots:input_type -> urussu.v1.ListDotsRequest
-	2, // 3: urussu.v1.DotsService.GetDot:input_type -> urussu.v1.GetDotRequest
-	1, // 4: urussu.v1.DotsService.ListDots:output_type -> urussu.v1.ListDotsResponse
-	3, // 5: urussu.v1.DotsService.GetDot:output_type -> urussu.v1.GetDotResponse
-	4, // [4:6] is the sub-list for method output_type
-	2, // [2:4] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	5, // 2: urussu.v1.Dot.images:type_name -> urussu.v1.Image
+	0, // 3: urussu.v1.DotsService.ListDots:input_type -> urussu.v1.ListDotsRequest
+	2, // 4: urussu.v1.DotsService.GetDot:input_type -> urussu.v1.GetDotRequest
+	1, // 5: urussu.v1.DotsService.ListDots:output_type -> urussu.v1.ListDotsResponse
+	3, // 6: urussu.v1.DotsService.GetDot:output_type -> urussu.v1.GetDotResponse
+	5, // [5:7] is the sub-list for method output_type
+	3, // [3:5] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_urussu_v1_dots_proto_init() }
@@ -353,6 +364,7 @@ func file_urussu_v1_dots_proto_init() {
 	if File_urussu_v1_dots_proto != nil {
 		return
 	}
+	file_urussu_v1_images_proto_init()
 	file_urussu_v1_dots_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

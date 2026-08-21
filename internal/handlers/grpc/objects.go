@@ -70,6 +70,7 @@ func objectToProto(o domain.Object) *urussuv1.Object {
 		Description: o.Description,
 		Radius:      o.Radius,
 		Coordinates: make([]*urussuv1.Point, 0, len(o.Coordinates)),
+		Images:      imagesToProto(o.Images),
 	}
 
 	for _, c := range o.Coordinates {

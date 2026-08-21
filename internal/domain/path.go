@@ -7,4 +7,5 @@ type Path struct {
 	Description string
 	// Coordinates is the polyline as [latitude, longitude] pairs.
 	Coordinates [][]float64
+	Images      []Image
 }

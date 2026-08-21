@@ -70,5 +70,6 @@ func dotToProto(d domain.Dot) *urussuv1.Dot {
 		Description: d.Description,
 		Layer:       d.Layer,
 		Coordinates: d.Coordinates,
+		Images:      imagesToProto(d.Images),
 	}
 }

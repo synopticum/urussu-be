@@ -13,4 +13,5 @@ type Dot struct {
 	Description string
 	Layer       string
 	Coordinates []float64
+	Images      []Image
 }
